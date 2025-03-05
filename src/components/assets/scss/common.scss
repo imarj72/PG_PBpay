@@ -2,7 +2,7 @@ $blueColor: #0065FF;
 $blaockColor: #253858;
 $bodyColor: #F4F6F8;
 
-// header 
+
 header {
   background-color: #fff;
   padding: 16px 32px;
@@ -11,10 +11,11 @@ header {
     p{
       font-size: 12px;
        font-style: normal;
+       color: #1807028e;
         font-weight: 400;
         span{
           display: inline-block;
-          width: 57px;
+          width: 80px;
           font-size: 12px;
           font-style: normal;
           border-radius: 8px;
@@ -22,12 +23,19 @@ header {
           height: 22px;
           line-height: 14px;
           margin-left:5px;
+          text-align:center;
           background-color: #FFEBE6;
         }
+      }
     }
-  }
-  @media (max-width:768px) {
-    padding: 15px 4px;
+    @media (max-width:768px) {
+      padding: 15px 4px;
+      .session-timer{
+        p{
+          margin-bottom:-20px;
+          color: #1807028e;
+        }
+      }
     background-color: transparent;
     box-shadow: none;
   }
@@ -1377,13 +1385,13 @@ header {
           &.verify-pay-btn{
             background-color: #3965FB;
             color:#fff;
-            margin: 10px 0;
+            margin: 10px auto;
             padding: 10px;
             font-weight: 600;
             text-transform: capitalize;
             min-width: 160px;
             @media (max-width:1140px) {
-              min-width: 120px;
+              min-width: 160px;
               font-size: 12px;
             }
             &:hover{
@@ -2268,7 +2276,8 @@ a{
 
   @media (max-width:780px) {
     margin-top: 20px;
-    font-weight: 550;
+    width:100%;
+    font-weight: 400;
    }
   p{
     color: #de350b;
@@ -2307,7 +2316,7 @@ a{
       tr{
         td{
           padding: 12px 16px;
-          vertical-align: top;
+          vertical-align: middle;
           &:nth-child(2){
           text-align:right;
           }
@@ -3185,9 +3194,8 @@ button{
   border-radius: 12px;
 }
 .header{
-  margin:20px auto 10px;
-  width:94.5%;
-  border-radius:8px;
+  margin: 15px 30px 10px;
+  border-radius: 8px;
 }
 
 .SessionTimer{
@@ -3202,6 +3210,12 @@ button{
     @media (min-width: 768px) {
       font-weight: 700;         
       width: 5rem;               
-      display: flex;            
+      display:flex;          
 }
 }
+
+.payment-accordion-head-amount{
+  display:block;
+  font-weight: 500;
+}
+

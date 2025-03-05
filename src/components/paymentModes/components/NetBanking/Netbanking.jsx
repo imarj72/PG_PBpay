@@ -1,25 +1,14 @@
 import { Grid,FormControl,InputLabel,MenuItem,Select,Button,Link } from '@mui/material'
 import React, { useState, useEffect } from 'react';
-const payModesToPass = [
-  {
-      code: "NB",
-      subPayModes: [
-          { code: "21", name: "HDFC" },
-          { code: "22", name: "ICICI" },
-          { code: "48", name: "SBI" },
-          { code: "32", name: "Kotak Mahindra" },
-          { code: "40", name: "PNB" },
-          { code: "6", name: "Bank of Baroda" }
-      ]
-  }
-];
 
-function Netbanking({nbDownBanks}) {
+
+function Netbanking({apiData, nbDownBanks}) {
   
     
     const [selectBankName, setBankName] = useState('');
     const [selectBankCode, setBankCode] = useState('');
-    const [bankList, setBankList] = useState(null);
+    const [bankList, setBankList] = useState([]);
+    const [popularList,setPopularList]=useState([]);
     const [txnurl , settxnurl ] = useState('');
     const [pgpayload , setpgpayload] = useState('');
     const [codeList , setcodeList] = useState('');
@@ -28,38 +17,31 @@ function Netbanking({nbDownBanks}) {
     const [downNBbanks , setDownNBbanks] = useState('');
     const queryParameters = new URLSearchParams(window.location.search);
     const error = queryParameters.get("error");
-     if(error === "1"){
-       nbDownBanks='ICICI Bank, HDFC Bank';
-       }
+ 
     
     let form;
     useEffect(() => {
-        if (payModesToPass) {
-             
-            const netBankingMethod = payModesToPass.find(method => method.code === 'NB');
-            const NBBanks = netBankingMethod ? netBankingMethod.subPayModes : null;
-            setBankList(NBBanks);
-	    setDownNBbanks(nbDownBanks);
-	    var bankcodes = [];
-            if(NBBanks){
-            NBBanks.forEach(function(item) {
-            bankcodes.push(item.code);
-            });
-           
-		setcodeList(bankcodes);
-		}
-            
-        }
-    }, [payModesToPass]); 
+      if (apiData && apiData.length > 0 && apiData[0].data && apiData[0].data.length > 0) {
+          const paymentModes = apiData[0].data[0].paymentModes;
+          const netBankingMethod = paymentModes.find(method => method.id === 'NB01');
+          if (netBankingMethod) {
+             setPopularList(netBankingMethod.popularInstruments);
+              setBankList(netBankingMethod.instruments);
+              const bankcodes = netBankingMethod.instruments.map(item => item.code);
+              setcodeList(bankcodes);
+          }
+      }
+  }, [apiData]);
+  
     
-const handleChange = (event) => {
-  setNBerror(false);
-  const selectedBankCode = event.target.value;
-  const selectedBank = bankList.find(bank => bank.code === selectedBankCode);
-  setBankName(selectedBank.name);
-  setBankCode(selectedBankCode); 
- 
+  const handleChange = (event) => {
+    setNBerror(false);
+    const selectedBankCode = event.target.value;
+    const selectedBank = bankList.find(bank => bank.code === selectedBankCode);
+    setBankName(selectedBank.displayName);
+    setBankCode(selectedBankCode);
 };
+
 
 
  useEffect(() => {
@@ -157,69 +139,34 @@ const delay = millis => new Promise((resolve, reject) => {
            
         <div className='card-info'>
         <ul>
-        {codeList && codeList.includes("21") && (
-           <li className={selectBankCode === '21' ? 'active' : ''} onClick={() => setBankCode('21')}>
-                <Link>
-                    <img src="./images/hdfc.svg" alt="hdfc"/> <span>HDFC</span>
-                </Link>
-            </li>
-          )}
-           {codeList.includes("22") && (
-           <li className={selectBankCode === '22' ? 'active' : ''} onClick={() => setBankCode('22')}>
-                <Link>
-                    <img src="./images/icici.svg" alt="icici"/> <span>ICICI</span>
-                </Link>
-            </li>
-            )}
-             {codeList && codeList.includes("48") && (
-            <li className={selectBankCode === '48' ? 'active' : ''} onClick={() => setBankCode('48')}>
-                <Link>
-                    <img src="./images/sbi.svg" alt="SBi"/> <span>SBI</span>
-                </Link>
-            </li>
-            )}
-	   {codeList && codeList.includes("32") && (
-            <li className={selectBankCode === '32' ? 'active' : ''} onClick={() =>setBankCode('32')}>
-                <Link>
-                    <img src="./images/kotak_mahindra.svg" alt="Kotak Mahindra"/> <span>Kotak Mahindra</span>
-                </Link>
-            </li>
-            )}
-           {codeList && codeList.includes("40") && (
-             <li className={selectBankCode === '40' ? 'active' : ''} onClick={() => setBankCode('40')}>
-                <Link>
-                    <img src="./images/PNB.svg" alt="PNB"/> <span>Punjab National Bank</span>
-                </Link>
-            </li>
-            )}
-            {codeList && codeList.includes("6") && (
-            <li className={selectBankCode === '6' ? 'active' : ''} onClick={() => setBankCode('6')}>
-                <Link>
-                    <img src="./images/BOB.svg" alt="hdfc"/> <span>Bank of Baroda</span>
-                </Link>
-            </li>
-            )}
-        </ul>
+    {popularList.map((bank, index) => (
+        <li key={index} className={selectBankCode === bank.code ? 'active' : ''} onClick={() => setBankCode(bank.code)}>
+            <Link>
+                <img src={bank.logo} alt={bank.name} className="bankLogo"/> 
+            </Link>
+        </li>
+    ))}
+</ul>
     </div>
   <Grid container spacing={3}>
   <Grid item md={12} xs={12} >
     <FormControl fullWidth className='form-control'>
       <InputLabel id="demo-simple-select-label">Select another bank</InputLabel>
-   <Select
-  labelId="demo-simple-select-label"
-  id="demo-simple-select"
-   value={selectBankCode}
-  label="Bank Name"
-  onChange={handleChange}
-  error={NBerror}
-  helperText={NBerror}
-   >
-  {bankList && bankList.map((bank, index) => (
-    <MenuItem key={index} value={bank.code}>
-      {bank.name}
-    </MenuItem>
-  ))}
+      <Select
+    labelId="demo-simple-select-label"
+    id="demo-simple-select"
+    value={selectBankCode}
+    label="Bank Name"
+    onChange={handleChange}
+    error={NBerror}
+>
+    {bankList.map((bank, index) => (
+        <MenuItem key={index} value={bank.code}>
+            {bank.displayName}
+        </MenuItem>
+    ))}
 </Select>
+
     </FormControl>
   </Grid>
 </Grid>

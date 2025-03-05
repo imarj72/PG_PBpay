@@ -1,19 +1,19 @@
 import { IconButton } from '@mui/material'
 import React from 'react'
-import ImageComponents from './ImageComponents'
-import  getDomain  from '../Pages/PaymentMode/Components/getDomain'; 
+import ImageComponent from './ImageComponent';
+// import  getDomain  from '../Pages/PaymentMode/Components/getDomain'; 
 function SkipAutoPay({handleCloseDialog}) {
 	
     
      const handleSubmit = (event) => {
     event.preventDefault();
-	const domain = getDomain();
+	// const domain = getDomain();
 	// const url = domain+'/pay/payment/autopay/thankyou';
-  const url=domain+'apitobeadded';
+  // const url=domain+'apitobeadded';
     
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = url; 
+    // form.action = url; 
       const queryParameters = new URLSearchParams(window.location.search);
       const orderNo = queryParameters.get("orderNo");
       const var1 = queryParameters.get("var1");
@@ -43,7 +43,7 @@ function SkipAutoPay({handleCloseDialog}) {
 
   return (
     <div className='skip-autopay-dialog'>
-        <IconButton className='close-btn' onClick={()=> handleCloseDialog ? handleCloseDialog() : null}><ImageComponents name={'closeBtn'} /></IconButton>
+        <IconButton className='close-btn' onClick={()=> handleCloseDialog ? handleCloseDialog() : null}><ImageComponent name={'closeBtn'} /></IconButton>
         <h3>Skip Autopay Registration</h3>
         <p>
         Registration of Mandate provides convenience in case of recurring transactions. Are you sure you want to skip the mandate Registration process?</p>

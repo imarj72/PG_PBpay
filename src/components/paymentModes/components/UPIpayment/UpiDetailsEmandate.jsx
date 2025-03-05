@@ -9,6 +9,7 @@ import fetchTxnStatus from '../../fetchTxnStatus';
 import fetchQRTxnStatus from '../../fetchQRTxnStatus';
 import ImageComponent from '../../../shared/ImageComponent';
 import EmandatePopUp from '../../childComponent/EmandatePopUp';
+import fetchMandateStatus from '../fetchMandateStatus';
 // import Loader from '../../Components/loader';
 // import getDomain from '../../Components/getDomain';
 // import fetchMandateStatus from '../../Components/fetchMandateStatus';
@@ -270,93 +271,137 @@ function UpiDetailsEmandate({payMode=mockData.payMode, productId=mockData.produc
       setvalidVPAerror('Please enter a valid UPI ID');
     }
   };
-
+  
   const checkTransactionStatus = async (payId, var1, var2, eMandateNo) => {
     try {
-        let txnStatus = '';
-        while (waitingForUpiStatusRef.current) {
-            console.log('check txn status starts!!!');
-            const encodedPayId = encodeURIComponent(payId);
-            const response = await fetchTxnStatus(encodedPayId, var1, var2);
-            txnStatus = response.status;
-            
-            if (txnStatus === 'TXN_SUCCESS') {
-              submitFormWithPayId(payId, var1, var2, eMandateNo);
-              break;
-            }
-            else if(txnStatus === 'TXN_FAILURE'){
-              setShowUpiBarCode(false);
-              setshowUpiPopUp(false);
-              setshowLoader(false);
-              setShowRetry(true);
-              setWaitingForUpiStatus(false);
-              break;
-             }
-            
-            await new Promise(resolve => setTimeout(resolve, 5000));
+      let txnStatus = '';
+      while (waitingForUpiStatusRef.current) {
+        console.log('check txn status starts!!!');
+        const encodedPayId = encodeURIComponent(payId);
+        const response = await fetchTxnStatus(encodedPayId, var1, var2);
+        if (response === null) {
+          continue;
         }
-    } catch (error) {
-        console.error('Error checking transaction status:', error);
-        
-    }
-  };  
+        txnStatus = response.status;
 
-//   const checkMandateStatus= async (eMandateNo, orderId, payId)=>{
-//     try {
-//       let mandateStatus = '';
-//       const maxRetries=24;
-//       let retries=0;
-//       while (waitingForUpiStatusRef.current && retries<maxRetries) {
-//           console.log('check mandate status starts!!!');
-//           const response = await fetchMandateStatus(eMandateNo, orderId, payId);
-//           mandateStatus = response.status;
-//           if (mandateStatus === 'TXN_SUCCESS' || mandateStatus === 'TXN_FAILURE') {
-//             submitFormWithPayId(payId, var1, var2, eMandateNo);
-//             break;
-//           }     
-//           retries++;
-//           await new Promise(resolve => setTimeout(resolve, 5000));
-//         }
-//         if(retries>=maxRetries){
-//           setShowUpiBarCode(false);
-//           setshowUpiPopUp(false);
-//           setshowLoader(false);
-//           setShowRetry(true);
-//           setWaitingForUpiStatus(false);
-//         }
-//   } catch (error) {
-//       console.error('Error checking mandate status:', error);
-//   }
-// }
-  
-    const checkQRTransactionStatus = async (payId, var1, var2, eMandateNo) => {
-    try {
-        let txnStatus = '';
-        while (waitingForUpiStatusRef.current) {
-            console.log('check txn status starts!!!');
-            const encodedPayId = encodeURIComponent(payId);
-            const response = await fetchQRTxnStatus(encodedPayId, var1, var2);
-            txnStatus = response.status;
-            
-            if (txnStatus === 'TXN_SUCCESS') 
-            {
-                submitFormWithQR(payId, var1, var2,eMandateNo);
-                break; 
-            }
-            else if(txnStatus === 'TXN_FAILURE'){
-              setShowUpiBarCode(false);
-              setshowUpiPopUp(false);
-              setshowLoader(false);
-              setShowRetry(true);
-              setWaitingForUpiStatus(false);
-              break;
-             }
-            
-            await new Promise(resolve => setTimeout(resolve, 5000));
+        if (txnStatus === 'TXN_SUCCESS') {
+          checkMandateStatus(eMandateNo, var1, var2, payId);
+          break;
         }
+        else if (txnStatus === 'TXN_FAILURE') {
+          setShowUpiBarCode(false);
+          setshowUpiPopUp(false);
+          setshowLoader(false);
+          setShowRetry(true);
+          setWaitingForUpiStatus(false);
+          break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
     } catch (error) {
-        console.error('Error checking transaction status:', error);
-        
+      console.error('Error checking transaction status:', error);
+
+    }
+  };
+
+  const checkMandateStatus = async (eMandateNo, var1, var2, payId) => {
+    try {
+
+      let mandateStatus = '';
+      const maxRetries = 4;
+      let retries = 0;
+      const encodedPayId = encodeURIComponent(payId);
+      const queryParameters = new URLSearchParams(window.location.search);
+      const order = queryParameters.get("orderNo");
+      const encodedOrderNo = encodeURIComponent(order);
+      while (waitingForUpiStatusRef.current && retries < maxRetries) {
+        retries++;
+        console.log('check mandate status....');
+        const response = await fetchMandateStatus(var1, encodedOrderNo, encodedPayId);
+        if (response === null) {
+          continue;
+        }
+        mandateStatus = response.status;
+        if (mandateStatus === 'TXN_SUCCESS' || mandateStatus === 'TXN_FAILURE') {
+          submitFormWithPayId(payId, var1, var2, eMandateNo);
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      if (retries >= maxRetries) {
+        submitFormWithPayId(payId, var1, var2, eMandateNo);
+      }
+    } catch (error) {
+      submitFormWithPayId(payId, var1, var2, eMandateNo);
+      console.error('Error checking mandate status:', error);
+    }
+  }
+
+
+  const checkMandateStatusQR = async (eMandateNo, var1, var2, payId) => {
+    try {
+      let mandateStatus = '';
+      const maxRetries = 4;
+      let retries = 0;
+      const encodedPayId = encodeURIComponent(payId);
+      const queryParameters = new URLSearchParams(window.location.search);
+      const order = queryParameters.get("orderNo");
+      const encodedOrderNo = encodeURIComponent(order);
+      while (waitingForUpiStatusRef.current && retries < maxRetries) {
+        retries++;
+        console.log('check mandate status....');
+        const response = await fetchMandateStatus(var1, encodedOrderNo, encodedPayId);
+        if (response === null) {
+          continue;
+        }
+        mandateStatus = response.status;
+        if (mandateStatus === 'TXN_SUCCESS' || mandateStatus === 'TXN_FAILURE') {
+          submitFormWithQR(payId, var1, var2, eMandateNo);
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      if (retries >= maxRetries) {
+        submitFormWithQR(payId, var1, var2, eMandateNo);
+      }
+    } catch (error) {
+      submitFormWithQR(payId, var1, var2, eMandateNo);
+      console.error('Error checking mandate status:', error);
+    }
+  }
+
+
+  const checkQRTransactionStatus = async (payId, var1, var2, eMandateNo) => {
+    try {
+      let txnStatus = '';
+      while (waitingForUpiStatusRef.current) {
+        console.log('check txn status starts!!!');
+        const encodedPayId = encodeURIComponent(payId);
+        const response = await fetchQRTxnStatus(encodedPayId, var1, var2);
+        if (response === null) {
+          continue;
+        }
+        txnStatus = response.status;
+
+        if (txnStatus === 'TXN_SUCCESS') {
+          checkMandateStatusQR(eMandateNo, var1, var2, payId);
+          break;
+        }
+        else if (txnStatus === 'TXN_FAILURE') {
+          setShowUpiBarCode(false);
+          setshowUpiPopUp(false);
+          setshowLoader(false);
+          setShowRetry(true);
+          setWaitingForUpiStatus(false);
+          break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+    } catch (error) {
+      console.error('Error checking transaction status:', error);
+
     }
   };
 

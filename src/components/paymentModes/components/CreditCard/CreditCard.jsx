@@ -7,7 +7,8 @@ import CustomizedDialogs from '../../../shared/CustomDialogs';
 
 
 
-function CreditCard({secret , cardDownBanks}) {
+
+function CreditCard({apiData, secret, cardDownBanks}) {
     const [showVisaNetwork, setVisaNetwork] = useState(false);
     const [expiryMonthYear, setExpiryMonthYear] = useState('');
     const [cardNumber, setCardNumber] = useState('');
@@ -119,7 +120,6 @@ const handleExpiryClick = () => {
         const formattedValue = sanitizedValue.replace(/(.{4})/g, '$1 ').trim();
     	 setCardNumber(formattedValue);
        getCardNetwork(sanitizedValue);
-       // setCardNumber(sanitizedValue);
     };
 
     const handleCvvClick=()=>{
@@ -144,7 +144,7 @@ const handleNameChange = (event) => {
         
     };
     const handleKeyDown = (event) => {
-        // Allow backspace key
+
         if (event.key === 'Backspace') {
             setExpiryMonthYear((prevValue) => prevValue.slice(0, -1));
         }
@@ -291,7 +291,7 @@ const delay = millis => new Promise((resolve, reject) => {
     </form>
 )} */}
    
-  {showForm === 1 && (
+  {/* {showForm === 1 && (
   <div style={{
     position: 'fixed', // Ensure this div covers the whole viewport
     top: 0,
@@ -306,10 +306,10 @@ const delay = millis => new Promise((resolve, reject) => {
   }}>
     <div dangerouslySetInnerHTML={{ __html: formHtml }} />
   </div>
-)}
+)} */}
 
 
- {showForm === 2 && (
+ {/* {showForm === 2 && (
   <div style={{
     position: 'fixed', // Ensure this div covers the whole viewport
     top: 0,
@@ -326,7 +326,7 @@ const delay = millis => new Promise((resolve, reject) => {
   }}>
      <MasterCardRupayForm  mastRupay={rupayMap} />
   </div>
-)}
+)} */}
    
   {cardDownBanks && cardDownBanks !== null && cardDownBanks.includes(',') && (
     <div className="generalMsgInfo">

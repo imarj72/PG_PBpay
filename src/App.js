@@ -1,45 +1,3 @@
-// import logo from './logo.svg';
-// import './App.css';
-// import Header from "./components/pages/Header/Header"
-// import { useEffect, useState } from 'react';
-// import PaymentGateway from './components/paymentGateway/PaymentGateway';
-// function App() {
-//   const [appData,setAppData]=useState(null);
-//   const[isLoading,setIsLoading]=useState(true);
-//   const [healthStatus, setHealthStatus]=useState(false);
-// useEffect(()=>
-// {
-//   const pathname=window.location.pathname;
-//   let fetchData;
-//   if(pathname==='/healthstatus')
-//   {
-//     setHealthStatus(true);
-//     setIsLoading(false);
-//     return;
-//   }
-// })
-  
-//   return (
-//    <>
-//    {healthStatus?(
-//     <>
-//     <div>success</div>
-//     </>
-//    ):(
-//     <>
-//     {!isLoading && <Header apiData={apiData} />}
-//     <div className='wrapper'>
-//             {!isLoading && <PaymentGateway apiData={apiData} />}
-//           </div>
-//     </>
-
-//    )}
-//    </>
-//   );
-// }
-
-// export default App;
-
 import logo from './logo.svg';
 import './App.css';
 // import Header from "./components/pages/Header/Header";
@@ -64,112 +22,180 @@ import PaymentFailedPopup from './components/paymentModes/components/UPIpayment/
 import UpiQR from './components/paymentModes/components/UPIpayment/UpiQR';
 import UpiDetailsEmandate from './components/paymentModes/components/UPIpayment/UpiDetailsEmandate';
 import UpiDetailsRecurring from './components/paymentModes/components/UPIpayment/UpiDetailsRecurring';
+import PaymentView from './components/paymentModes/PaymentView';
+import PaymentTabs from './components/paymentTabs/PaymentTabs';
+
 function App() {
   const [appData, setAppData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [healthStatus, setHealthStatus] = useState(false);
-  const mockApiData= {
-    secret: "someSecretKey123",
-    cardDownBanks: ["Bank A", "Bank B"],
-    nbDownBanks: ["Bank C", "Bank D"],
-    displayMode: 5,
-    displayModeCheck: true,
-    retry: false,
-    emandateRegistered: false,
-    planDetails: [
-      {
-        insurerLogo: "digit.png",
-        insurerName: "digit Insurance Co.",
-        txAmount: "5000",
-        premium: "4500",
-        multiplier: 1.1
-      }
-    ],
-    totalAmount: "5000",
-    eligibleModes: [
-      { code: "CC", name: "Credit Card" },
-      { code: "DC", name: "Debit Card" },
-      { code: "NB", name: "Net Banking" },
-      { code: "UPI", name: "UPI" },
-      // { code: "EMI", name: "emi" },
-      
-    ],
-    eligibleRecurringModes: [
-      { code: "EMANDATE_NB", name: "E-Mandate Net Banking" },
-      { code: "RECURRING_DC", name: "Recurring Debit Card" },
-      { code: "UPI_EMANDATE", name: "UPI E-Mandate" }
-    ],
-    amount: "5000",
-    encryptParentOrderNo: "ENC123456",
-    eMandateNo: "EMAN789012",
-    maxAmountLimit: "10000",
-    parentOrderNo: "PO345678",
-    order_id: "ORD901234",
-    cust_id: "CUST567890",
-    mid: "MERCHANT123",
-    expire_at: "2023-12-31T23:59:59",
-    sidcBankNote: "Some note about SIDC bank",
-    productId: "PROD123",
-    srcSupplierId: "SUPP456",
-    orderNo: "ORD789012",
-    showEmanQrCode: true,
-    isMultiplier: 1,
-    defaultMode: "CC",
-    tabIndex: 0
-  };
+
+  const apiData = [
+    {
+      path: "ui/getPaymentPageDetails",
+      error: null,
+      status: 200,
+      data: [
+        {
+          secondryColorHex: "#000000",
+          amount: 1000012,
+          disabledFields: ["test4", "test5"],
+          merchantId: "merchantIdWeb",
+          orderId: "uiX005",
+          sessionExpiryTime: 1740725434928,
+          logo: "https://www.coursemonster.com/assest/images/brand/google-logo.png",
+          paymentModes: [
+            // 1) Netbanking (existing)
+            {
+              id: "NB01",
+              name: "netbanking",
+              displayName: "Net Banking",
+              nextURL: "https://www.google.com",
+              order: 0,
+              popularInstruments: [{
+                id: "HDFC01",
+                name: "HDFC",
+                displayName: "HDFC Net Banking",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/2/28/HDFC_Bank_Logo.svg",
+                code: "xax11"
+              },
+              {
+                id: "AXIS02",
+                name: "AXIS",
+                displayName: "AXIS Net Banking",
+                logo: "https://www.axisbank.com/assets/images/logo.png",
+                code: "Axq1"
+              },
+              {
+                id: "SBI03",
+                name: "SBI",
+                displayName: "SBI Net Banking",
+                logo: "https://upload.wikimedia.org/wikipedia/en/5/58/State_Bank_of_India_logo.svg",
+                code: "sbix1"
+              },
+              {
+                id: "KOTAK04",
+                name: "KOTAK",
+                displayName: "Kotak Net Banking",
+                logo: "https://upload.wikimedia.org/wikipedia/en/3/39/Kotak_Mahindra_Group_logo.svg",
+                code: "kotakx1"
+              }
+              ],
+              instruments: [
+                {
+                  id: "HDFC01",
+                  name: "HDFC",
+                  displayName: "HDFC Net Banking",
+                  logo: "https://upload.wikimedia.org/wikipedia/commons/2/28/HDFC_Bank_Logo.svg",
+                  code: "xax11"
+                },
+                {
+                  id: "AXIS02",
+                  name: "AXIS",
+                  displayName: "AXIS Net Banking",
+                  logo: "https://www.axisbank.com/assets/images/logo.png",
+                  code: "Axq1"
+                },
+                {
+                  id: "SBI03",
+                  name: "SBI",
+                  displayName: "SBI Net Banking",
+                  logo: "https://upload.wikimedia.org/wikipedia/en/5/58/State_Bank_of_India_logo.svg",
+                  code: "sbix1"
+                },
+                {
+                  id: "KOTAK04",
+                  name: "KOTAK",
+                  displayName: "Kotak Net Banking",
+                  logo: "https://upload.wikimedia.org/wikipedia/en/3/39/Kotak_Mahindra_Group_logo.svg",
+                  code: "kotakx1"
+                },
+                {
+                  id: "PNB05",
+                  name: "PNB",
+                  displayName: "PNB Net Banking",
+                  logo: "https://upload.wikimedia.org/wikipedia/commons/b/b2/Punjab_National_Bank_new_logo.svg",
+                  code: "pnbx1"
+                },
+                {
+                  id: "BOB04",
+                  name: "BANKOFBARODA",
+                  displayName: "Bank of Baroda Net Banking",
+                  logo: " https://upload.wikimedia.org/wikipedia/en/f/f2/BankOfBarodaLogo.svg",
+                  code: "BOBx1"
+                }
+              ]
+            },
+
+            // 3) Credit Card (new)
+            {
+              id: "CC02",
+              name: "creditCard",
+              displayName: "Credit Card",
+              nextURL: "https://www.google.com",
+              order: 2,
+              polpularInstruments: [],
+              instruments: []
+            },
+            // 4) Debit Card (new)
+            {
+              id: "DC02",
+              name: "debitCard",
+              displayName: "Debit Card",
+              nextURL: "https://www.google.com",
+              order: 3,
+              polpularInstruments: [],
+              instruments: []
+            },
+            // 5) UPI (new)
+            {
+              id: "UPI02",
+              name: "upi",
+              displayName: "UPI",
+              nextURL: "https://www.google.com",
+              order: 4,
+              polpularInstruments: [],
+              instruments: []
+            }
+          ],
+          primaryColorHex: "#FFFFFF",
+          transactionId: "TXID1740724534700101618453",
+          merchantName: "Test Merchant",
+          extraFields: ["test1", "test2"]
+        }
+      ],
+      timestamp: "2025-02-28T06:36:28.097814500"
+    }
+  ];
+
+
   const mockProps = {
     isSI: false,
-    onCategoryValueChange: (value) => console.log("Category changed:", value)
+    onCategoryValueChange: (value) => console.log("Category changed:", value),
   };
-  
 
+  // Example usage in your app (commented out lines are for reference)
   // useEffect(() => {
-  //   const pathname = window.location.pathname;
-  //   let fetchData;
-  //   if (pathname === '/healthstatus') {
-  //     setHealthStatus(true);
-  //     setIsLoading(false);
-  //     return;
-  //   }
-
-  //   setAppData(dummyApiData);
+  //   // ...
+  //   setAppData(newApiData);
   //   setIsLoading(false);
   // }, []);
 
   return (
     <>
-      {/* {healthStatus ? (
-        <div>success</div>
-      ) : (
-        <>
-          {!isLoading && <Header apiData={appData} />}
-          <PaymentGateway apiData={appData} />
-        </>
-      )}*/}
-      {/* <Netbanking/> */}
-      {/* <CreditCard/> */}
-      {/* <MasterCardRupayForm/> */}
-      {/* <CreditCardRecurring/> */}
-      {/* <CreditCardSI/> */}
-      {/* <EmiTabs/> */}
-      {/* <UpiDetails/> */}
-      {/* <PaymentFailedPopup/> */}
-      {/* <UpiQR/> */}
-      {/* <UpiDetailsEmandate/> */}
-      {/* <UpiDetailsRecurring/> */}
-      <PaymentAccordion 
-      apiData={mockApiData}
-  isSI={mockProps.isSI} 
-  onCategoryValueChange={mockProps.onCategoryValueChange} 
-/>
-      {/* <EmiTable/> */}
-      {/* <CardlessEmiDetails/> */}
-      {/* <BankDetails/> */}
-      {/* <EmiCreditCardDetails/> */}
-      {/* <VisaMasterInfo/> */}
+      {/* Example direct usage. Renders PaymentView with newApiData */}
+      <PaymentView
+        apiData={apiData}
+        isSI={mockProps.isSI}
+        onCategoryValueChange={mockProps.onCategoryValueChange}
+      />
 
-      {/* <NetbankingRecurring/> */}
-        {/* <PaymentAccordion/> */}
+      {/* If you’d like to also show PaymentTabs directly with the new data:
+          <PaymentTabs
+             apiData={newApiData}
+             onCategoryValueChange={mockProps.onCategoryValueChange}
+          />
+       */}
     </>
   );
 }

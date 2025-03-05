@@ -4,8 +4,7 @@ import PaymentStepsSI from '../paymentSteps/PaymentStepsSI';
 import PlanAccordion from './commonDetails/PlanAccordion';
 import PaymentAccordion from '../paymentTabs/component/PaymentAccordion';
 import PaymentError from '../paymentSteps/PaymentError';
-import EmandateRegistered from '../paymentSteps/EmandateRegistered';
-import CustomizedDialogs from '../shared/CustomDialogs';
+
 import PaymentTabs from '../paymentTabs/PaymentTabs';
 
 
@@ -76,7 +75,7 @@ return (
             )}
                 </li>
                 <li className='hidden md:block col-right-panel'>
-                    {!isMobileView &&  <PlanAccordion/>}
+                    {!isMobileView &&  <PlanAccordion apiData={apiData}/>}
                     
                 </li>
 		<li className='md:hidden'>

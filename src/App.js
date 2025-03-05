@@ -26,7 +26,6 @@ import PaymentView from './components/paymentModes/PaymentView';
 import PaymentTabs from './components/paymentTabs/PaymentTabs';
 
 function App() {
-  const [appData, setAppData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [healthStatus, setHealthStatus] = useState(false);
 
@@ -42,7 +41,7 @@ function App() {
           disabledFields: ["test4", "test5"],
           merchantId: "merchantIdWeb",
           orderId: "uiX005",
-          sessionExpiryTime: 1740725434928,
+          sessionExpiryTime: 1741282230,
           logo: "https://www.coursemonster.com/assest/images/brand/google-logo.png",
           paymentModes: [
             // 1) Netbanking (existing)
@@ -174,16 +173,8 @@ function App() {
     onCategoryValueChange: (value) => console.log("Category changed:", value),
   };
 
-  // Example usage in your app (commented out lines are for reference)
-  // useEffect(() => {
-  //   // ...
-  //   setAppData(newApiData);
-  //   setIsLoading(false);
-  // }, []);
-
   return (
     <>
-      {/* Example direct usage. Renders PaymentView with newApiData */}
       <Header apiData={apiData}/>
       <PaymentView
         apiData={apiData}
@@ -191,12 +182,6 @@ function App() {
         onCategoryValueChange={mockProps.onCategoryValueChange}
       />
 
-      {/* If you’d like to also show PaymentTabs directly with the new data:
-          <PaymentTabs
-             apiData={newApiData}
-             onCategoryValueChange={mockProps.onCategoryValueChange}
-          />
-       */}
     </>
   );
 }

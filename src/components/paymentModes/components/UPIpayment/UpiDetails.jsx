@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Button, 
-  Link, 
-  Grid, 
-  FormControl, 
-  InputLabel, 
-  MenuItem, 
-  Select, 
-  TextField, 
-  Dialog 
+import {
+  Button,
+  Link,
+  Grid,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Dialog
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -21,7 +21,6 @@ import UpiQR from './UpiQR';
 // import getDomain from '../../Components/getDomain';
 
 function UpiDetails({ apiData }) {
-  // State variables
   const [selectOtherApps, setSelectOtherApps] = useState('');
   const [showUpiBarCode, setShowUpiBarCode] = useState(false);
   const [showUpiPopUp, setShowUpiPopUp] = useState(false);
@@ -33,31 +32,22 @@ function UpiDetails({ apiData }) {
   const [showUpiQR, setShowUpiQR] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
   const [showRetry, setShowRetry] = useState(false);
-  const [showCheck, setShowCheck] = useState(false); 
+  const [showCheck, setShowCheck] = useState(false);
   const [txAmount, setTxAmount] = useState('');
   const [statusWaitTime, setWaitStatusTime] = useState('5');
   const [mode, setMode] = useState('');
   const [vpa, setVpa] = useState('');
   const isCheckingStatusRef = useRef(false);
+  const [activeStep, setActiveStep] = useState(0);
 
-  // Use Material UI responsive hooks
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Variables used in payment requests
+
   let var1, var2;
 
-  // Inline styles for additional info text
-  const divStyle = {
-    alignSelf: 'flex-end',
-    paddingBottom: '3%',
-    textAlign: 'justify',
-    boxSizing: 'border-box',
-    fontFamily: 'Roboto, "Segoe UI", -apple-system, "Helvetica Neue", BlinkMacSystemFont, Oxygen-Sans, Ubuntu, Cantarell, sans-serif',
-    fontSize: '0.8em'
-  };
 
-  // Example change handler for "Other Apps" selection
   const handleChange = (event) => {
     setSelectOtherApps(event.target.value);
   };
@@ -70,9 +60,7 @@ function UpiDetails({ apiData }) {
     setValidVPAerror('');
   };
 
-  // ----------------------------
-  // Payment processing functions
-  // ----------------------------
+
   const handleIntentPayNow = async () => {
     setShowLoader(true);
     const queryParameters = new URLSearchParams(window.location.search);
@@ -98,7 +86,6 @@ function UpiDetails({ apiData }) {
         setTimeout(() => checkTransactionStatus(decPayId, var1, var2), data1.data.upiWaitStatusTime * 1000);
       } else {
         setShowLoader(false);
-        // handle error
       }
     } catch (error) {
       console.error('Error:', error);
@@ -129,7 +116,7 @@ function UpiDetails({ apiData }) {
         var1 = data.interStatusVar1;
         var2 = data.interStatusVar2;
         setPayId(decPayId);
-        isCheckingStatusRef.current = true; 
+        isCheckingStatusRef.current = true;
         setTimeout(() => checkTransactionStatus(decPayId, var1, var2), data.qrCodeWaitStatusTime * 1000);
       } else {
         setShowLoader(false);
@@ -243,7 +230,7 @@ function UpiDetails({ apiData }) {
     form.submit();
   };
 
-  // Render the responsive UPI view using a single code block
+
   return (
     <>
       {/* Hidden form for submitting UPI details, if needed */}
@@ -280,7 +267,6 @@ function UpiDetails({ apiData }) {
             <div className='scan-pay-box'>
               <ul>
                 {isMobile ? (
-                  // Mobile view: render "Enter UPI ID" first, then "Scan and Pay"
                   <>
                     <li>
                       <h3>Enter UPI ID</h3>
@@ -301,16 +287,17 @@ function UpiDetails({ apiData }) {
                       </form>
                       <div id="stepper">
                         <ul className="steps">
-                          <li>
+                          <li className={activeStep === 0 ? 'step-active' : ''}>
                             <span>Enter your registered VPA</span>
                           </li>
-                          <li className="steps">
+                          <li className={activeStep === 1 ? 'step-active' : ''}>
                             <span>Receive payment request on payment app</span>
                           </li>
-                          <li className="non-active">
+                          <li className={activeStep === 2 ? 'step-active' : ''}>
                             <span>Authorize payment request</span>
                           </li>
                         </ul>
+
                       </div>
                     </li>
                     {showUpiQR && (
@@ -326,7 +313,7 @@ function UpiDetails({ apiData }) {
                     )}
                   </>
                 ) : (
-                  // Desktop view: render "Scan and Pay" first, then "Enter UPI ID"
+
                   <>
                     {showUpiQR && (
                       <li>
@@ -377,19 +364,19 @@ function UpiDetails({ apiData }) {
           </div>
         </div>
       </div>
-      
+
       <Dialog open={showUpiPopUp} onClose={() => setShowUpiPopUp(false)}>
         <UpiPaymentProcess QrCodeData={QrCodeData} handleCloseDialog={handleCloseDialog} vpa={vpa} />
       </Dialog>
-      
+
       <Dialog open={showUpiBarCode} onClose={() => setShowUpiBarCode(false)} className='upi-dialog'>
         <UpiQR QrCodeData={QrCodeData} handleCloseDialog={handleCloseDialog} txAmount={txAmount} mode={mode} />
       </Dialog>
-      
+
       <Dialog open={showRetry} onClose={() => setShowRetry(false)}>
         <PaymentFailedPopup handleCloseDialog={handleCloseDialog} retryPayment={retryPayment} />
       </Dialog>
-      
+
       <div className="payment-error-box">
         Transaction confirmation for UPI takes longer than other payment modes. Given the delay, we recommend you wait for some time before making another payment attempt using UPI.
       </div>

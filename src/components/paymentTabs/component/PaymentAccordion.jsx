@@ -72,12 +72,12 @@ export default function PaymentAccordion({ apiData }) {
                     <div className="flex items-center justify-end">
                       <p>
                         <span style={{ opacity: '40%' }}>Amount</span>
-                        <strong className="block">
+                        <div className="payment-accordion-head-amount">
                           <i className="text-xs">
                             <FontAwesomeIcon icon={faInr} />
                           </i>{' '}
                           {(+apiData[0].data[0].amount).toFixed(2)}
-                        </strong>
+                        </div>
                       </p>
                     </div>
                   </div>
@@ -245,7 +245,7 @@ export default function PaymentAccordion({ apiData }) {
             }
           })}
 
-          <PlanAccordion />
+          <planAccordion apiData={apiData}/>
         </div>
 
         <div style={certifiedLogosStyle} className="certified-logos hideSmall">

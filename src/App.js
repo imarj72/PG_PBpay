@@ -133,7 +133,7 @@ function App() {
               displayName: "Credit Card",
               nextURL: "https://www.google.com",
               order: 2,
-              polpularInstruments: [],
+              popularInstruments: [],
               instruments: []
             },
             // 4) Debit Card (new)
@@ -143,7 +143,7 @@ function App() {
               displayName: "Debit Card",
               nextURL: "https://www.google.com",
               order: 3,
-              polpularInstruments: [],
+              popularInstruments: [],
               instruments: []
             },
             // 5) UPI (new)
@@ -153,7 +153,7 @@ function App() {
               displayName: "UPI",
               nextURL: "https://www.google.com",
               order: 4,
-              polpularInstruments: [],
+              popularInstruments: [],
               instruments: []
             }
           ],

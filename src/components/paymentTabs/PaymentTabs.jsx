@@ -48,7 +48,6 @@ export default function PaymentTabs({ apiData }) {
   const [value, setValue] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [paymentModes, setPaymentModes] = useState([]);
-  // Track animating state for each tab
   const [tabAnimating, setTabAnimating] = useState([]);
 
   useEffect(() => {
@@ -121,8 +120,8 @@ export default function PaymentTabs({ apiData }) {
       return (
         <Box
           sx={{
-            width: 40,
-            height: 40,
+            width: 50,
+            height: 50,
             position: 'relative',
             display: 'flex',
             justifyContent: 'center',

@@ -558,7 +558,6 @@ header {
           &:last-child {
             border: none;
             border-radius: 0 0 8px 8px;
-            // padding: 10px 10px 5px;
           }
 
           li {
@@ -1599,7 +1598,7 @@ header {
     }
     .payment-accordion-box{
       .MuiPaper-root{
-        margin:0 0 15px;
+        margin:20px 0 15px;
         border-radius: 10px;
         box-shadow: 0px 6px 16px 0px rgba(52, 105, 203, 0.16);
         .MuiAccordionSummary-root{
@@ -1734,7 +1733,7 @@ header {
 	}
 	}
   @media (max-width:768px) {
-    padding: 10px 0;
+    padding: 0px 0;
   }
 }
 .custom-dialogs{
@@ -1792,10 +1791,14 @@ header {
 .plan-detail-accodion{
   background-color: #fff;
   box-shadow: 0px 6px 16px 0px rgba(52, 105, 203, 0.16);
-  border-radius: 8px;
+  border-radius: 80px;
   padding: 15px;
   position: relative;
+  outline: 0;
+  border-top: none;
   margin-bottom: 10px;
+  margin-left:40px;
+
   h3{
     position: relative;
     font-weight: 600;
@@ -3176,4 +3179,8 @@ button{
   max-height: 20px;
   @media (max-width:768px)
   {margin:auto;}
+}
+.css-medk7a-MuiPaper-root-MuiAccordion-root.Mui-expanded:last-of-type{
+  margin-left: 40px;
+  border-radius: 12px;
 }

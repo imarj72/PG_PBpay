@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-// import Header from "./components/pages/Header/Header";
+import Header from "./components/pages/Header/Header";
 import { useEffect, useState } from 'react';
 // import PaymentGateway from './components/paymentGateway/PaymentGateway';
 import PaymentAccordion from './components/paymentTabs/component/PaymentAccordion';
@@ -184,6 +184,7 @@ function App() {
   return (
     <>
       {/* Example direct usage. Renders PaymentView with newApiData */}
+      <Header apiData={apiData}/>
       <PaymentView
         apiData={apiData}
         isSI={mockProps.isSI}

@@ -41,7 +41,7 @@ function App() {
           disabledFields: ["test4", "test5"],
           merchantId: "merchantIdWeb",
           orderId: "uiX005",
-          sessionExpiryTime: 1741282230,
+          sessionExpiryTime: 1741259018000,
           logo: "https://www.coursemonster.com/assest/images/brand/google-logo.png",
           paymentModes: [
             // 1) Netbanking (existing)
@@ -49,7 +49,7 @@ function App() {
               id: "NB01",
               name: "netbanking",
               displayName: "Net Banking",
-              nextURL: "https://www.google.com",
+              nextURL: "https://example.com/api/nextBanks?page=2",
               order: 0,
               popularInstruments: [{
                 id: "HDFC01",
@@ -131,7 +131,6 @@ function App() {
               id: "CC02",
               name: "creditCard",
               displayName: "Credit Card",
-              nextURL: "https://www.google.com",
               order: 2,
               popularInstruments: [],
               instruments: []
@@ -141,7 +140,6 @@ function App() {
               id: "DC02",
               name: "debitCard",
               displayName: "Debit Card",
-              nextURL: "https://www.google.com",
               order: 3,
               popularInstruments: [],
               instruments: []
@@ -151,7 +149,6 @@ function App() {
               id: "UPI02",
               name: "upi",
               displayName: "UPI",
-              nextURL: "https://www.google.com",
               order: 4,
               popularInstruments: [],
               instruments: []

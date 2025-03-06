@@ -291,42 +291,6 @@ const delay = millis => new Promise((resolve, reject) => {
     </form>
 )} */}
    
-  {/* {showForm === 1 && (
-  <div style={{
-    position: 'fixed', // Ensure this div covers the whole viewport
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'white', // Blank background color
-    display: 'flex',
-    justifyContent: 'center', // Center horizontally
-    alignItems: 'center', // Center vertically
-    zIndex: 9999 // Ensure it's on top of other content
-  }}>
-    <div dangerouslySetInnerHTML={{ __html: formHtml }} />
-  </div>
-)} */}
-
-
- {/* {showForm === 2 && (
-  <div style={{
-    position: 'fixed', // Ensure this div covers the whole viewport
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'white', // Blank background color
-    //display: 'flex',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center', // Center horizontally
-    alignItems: 'center', // Center vertically
-    zIndex: 9999 // Ensure it's on top of other content
-  }}>
-     <MasterCardRupayForm  mastRupay={rupayMap} />
-  </div>
-)} */}
    
   {cardDownBanks && cardDownBanks !== null && cardDownBanks.includes(',') && (
     <div className="generalMsgInfo">

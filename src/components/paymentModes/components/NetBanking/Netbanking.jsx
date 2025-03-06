@@ -16,7 +16,6 @@ const apiData = [
         sessionExpiryTime: 1741259018000,
         logo: "https://www.coursemonster.com/assest/images/brand/google-logo.png",
         paymentModes: [
-          // 1) Netbanking
           {
             id: "NB01",
             name: "netbanking",
@@ -98,7 +97,6 @@ const apiData = [
               }
             ]
           },
-          // 3) Credit Card (new)
           {
             id: "CC02",
             name: "creditCard",
@@ -107,7 +105,6 @@ const apiData = [
             popularInstruments: [],
             instruments: []
           },
-          // 4) Debit Card (new)
           {
             id: "DC02",
             name: "debitCard",
@@ -116,7 +113,6 @@ const apiData = [
             popularInstruments: [],
             instruments: []
           },
-          // 5) UPI (new)
           {
             id: "UPI02",
             name: "upi",
@@ -170,7 +166,7 @@ function simulateFetch(url) {
       } else {
         reject(new Error("nextURL not found"));
       }
-    }, 500);
+    }, 1000);
   });
 }
 

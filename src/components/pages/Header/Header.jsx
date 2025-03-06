@@ -18,12 +18,14 @@ function Header({ apiData }) {
       // console.log('endtime:',endTime);
       if (!endTime) return 0;
       const currTime = new Date().getTime();
-      const expiryTime = new Date(parseInt(endTime) * 1000).getTime();
+      const expiryTime = new Date(parseInt(endTime)).getTime();
 
       const diff = expiryTime - currTime;
       // console.log('difference:',diff);
       return diff > 0 ? diff : 0;
     }
+
+
     useEffect(() => {
       let timer;
       if (remainingTime > 0) {
@@ -32,7 +34,7 @@ function Header({ apiData }) {
         }, 1000);
       } else {
 
-        setShowSessionPopUp(true);
+        setShowSessionPopUp(false);
         if (!handleSubmitCalled.current) {
           setTimeout(() => {
             setShowSessionPopUp(false);

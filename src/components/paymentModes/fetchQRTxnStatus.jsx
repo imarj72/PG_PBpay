@@ -6,6 +6,11 @@ async function fetchQRTxnStatus(payId , var1 , var2) {
         'Content-Type': 'application/json'
       },
     });
+   if(!response.ok)
+   {
+    console.error("Error fetching QRTxn data",response.statusText);
+    return null;
+   }
 
     const data = await response.json();
     return data;

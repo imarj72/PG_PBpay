@@ -123,9 +123,9 @@ export default function PlanAccordion({apiData}) {
       <Accordion
         expanded={expandedPanel === 'orderDetailsPanel'}
         onChange={handleAccordionChange('orderDetailsPanel')}
-        className="shadow-none plan-detail-accodion"
+        className="plan-detail-accodion"
         sx={{
-          boxShadow: 'none',
+          boxShadow: '0px 6px 16px 0px rgba(52, 105, 203, 0.16)',
           backgroundColor: '#fff',
           borderRadius: '12px',
           '&:before': {

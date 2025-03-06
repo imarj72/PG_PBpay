@@ -146,7 +146,7 @@ const handleNameChange = (event) => {
     const handleKeyDown = (event) => {
 
         if (event.key === 'Backspace') {
-            setExpiryMonthYear((prevValue) => prevValue.slice(0, -1));
+            setExpiryMonthYear((prevValue) => prevValue(0,-1));
         }
     };
       const handlePayNow = async () => {

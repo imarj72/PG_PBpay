@@ -114,7 +114,6 @@ export default function PaymentTabs({ apiData }) {
     }
   };
 
-
   const getTabLabel = (mode, index) => {
     if (tabAnimating[index]) {
       return (
@@ -158,54 +157,22 @@ export default function PaymentTabs({ apiData }) {
     return getModeLabel(mode.name);
   };
 
-  const renderTabContent = (mode, index) => {
-    const isAnimating = tabAnimating[index] && value === index;
 
-    let content = null;
-    if (mode.name === 'netbanking') {
-      content = <Netbanking apiData={apiData} nbDownBanks={[]} />;
-    } else if (mode.name === 'creditCard') {
-      content = <CreditCard apiData={apiData} />;
-    } else if (mode.name === 'debitCard') {
-      content = <DebitCard apiData={apiData} />;
-    } else if (mode.name === 'upi') {
-      content = <UpiDetails apiData={apiData} />;
-    } else if (mode.name === 'card') {
-      content = <CreditCard apiData={apiData} />;
+  const renderTabContent = (mode) => {
+    switch (mode.name) {
+      case 'netbanking':
+        return <Netbanking apiData={apiData} nbDownBanks={[]} />;
+      case 'creditCard':
+        return <CreditCard apiData={apiData} />;
+      case 'debitCard':
+        return <DebitCard apiData={apiData} />;
+      case 'upi':
+        return <UpiDetails apiData={apiData} />;
+      case 'card':
+        return <CreditCard apiData={apiData} />;
+      default:
+        return null;
     }
-
-    return (
-      <Box sx={{ position: 'relative' }}>
-        <Box sx={{ visibility: isAnimating ? 'hidden' : 'visible' }}>
-          {content}
-        </Box>
-
-        {isAnimating && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-              backgroundColor: '#fff', 
-            }}
-          >
-            <Skeleton
-              animation="wave"
-              variant="rectangular"
-              width="100%"
-              height="100%"
-              sx={{ borderRadius: 2 }}
-            />
-          </Box>
-        )}
-      </Box>
-    );
   };
 
   return (
@@ -241,7 +208,7 @@ export default function PaymentTabs({ apiData }) {
 
               {paymentModes.map((mode, index) => (
                 <TabPanel key={mode.id} className="tabs" value={value} index={index}>
-                  {renderTabContent(mode, index)}
+                  {renderTabContent(mode)}
                 </TabPanel>
               ))}
             </Box>

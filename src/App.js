@@ -41,7 +41,7 @@ function App() {
           disabledFields: ["test4", "test5"],
           merchantId: "merchantIdWeb",
           orderId: "uiX005",
-          sessionExpiryTime: 1741259018000,
+          sessionExpiryTime: 17412559018000,
           logo: "https://www.coursemonster.com/assest/images/brand/google-logo.png",
           paymentModes: [
             // 1) Netbanking (existing)

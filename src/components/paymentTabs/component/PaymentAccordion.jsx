@@ -245,7 +245,8 @@ export default function PaymentAccordion({ apiData }) {
             }
           })}
 
-          <planAccordion apiData={apiData}/>
+          <PlanAccordion apiData={apiData}/>
+
         </div>
 
         <div style={certifiedLogosStyle} className="certified-logos hideSmall">

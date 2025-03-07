@@ -142,12 +142,23 @@ export default function PlanAccordion({apiData}) {
           }
           aria-controls="order-details-content"
           id="order-details-header"
+         
         >
           <Typography variant="h7" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src="/images/order.png"
+            alt="Order Icon"
+            style={{ width: 24, height: 24, marginRight: 8 }}
+          />
             Order Details
           </Typography>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails 
+         sx={{
+          borderTop: '1px solid #e0e0e0',
+          borderBottom: '1px solid #e0e0e0'
+        }}
+        >
           <div className="plan-details-view plan-details-box">
             {orders.length > 0 ? (
               orders.map((order, index) => (
@@ -193,7 +204,7 @@ export default function PlanAccordion({apiData}) {
                       </tr>
                     </tbody>
                   </table>
-                  {index < orders.length - 1 && <hr />}
+                  {index < orders.length - 1 && <hr style={{ margin: '20px 0' }} />}
                 </div>
               ))
             ) : (

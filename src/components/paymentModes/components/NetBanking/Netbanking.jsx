@@ -197,11 +197,11 @@ function Netbanking({ nbDownBanks }) {
         setNextUrl(netBankingMethod.nextUrl || null);
       }
     }
-  }, []);
+  }, [apiData]);
 
   const handleChange = (event) => {
     setNBerror(false);
-    const selectedBankCode = event.target.value;
+    const selectedBankCode =event.target.value;
     const selectedBank = bankList.find(bank => bank.code === selectedBankCode);
     setBankName(selectedBank?.displayName ?? '');
     setBankCode(selectedBankCode);
@@ -210,7 +210,7 @@ function Netbanking({ nbDownBanks }) {
   useEffect(() => {
     if (selectBankCode) {
       const selectedBank = bankList.find(bank => bank.code === selectBankCode);
-      setBankName(selectedBank?.displayName ?? '');
+      setBankName(selectedBank?.displayName ?? ''); 
     }
     setNBerror(false);
   }, [selectBankCode, bankList]);
@@ -348,8 +348,8 @@ function Netbanking({ nbDownBanks }) {
                     </MenuItem>
                   ))}
                   {isLoadingMore && (
-                    <MenuItem disabled style={{ opacity: 0.6 }}>
-                      Loading more banks...
+                    <MenuItem disabled style={{opacity:0.6}}>
+                      Loading more banks....
                     </MenuItem>
                   )}
                 </Select>

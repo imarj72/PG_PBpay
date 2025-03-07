@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/PG_PBpay/static/css/main.05ee527d.css",
+    "main.js": "/PG_PBpay/static/js/main.642ebb46.js",
+    "static/media/cvv_card.svg": "/PG_PBpay/static/media/cvv_card.602100a8cc7c5308e3ec.svg",
+    "static/media/pos_active.svg": "/PG_PBpay/static/media/pos_active.b1b661e41d727e787bde.svg",
+    "static/media/pos.svg": "/PG_PBpay/static/media/pos.a37dcce26f47feb5d160.svg",
+    "static/media/logo.svg": "/PG_PBpay/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/PG_PBpay/index.html",
+    "main.05ee527d.css.map": "/PG_PBpay/static/css/main.05ee527d.css.map",
+    "main.642ebb46.js.map": "/PG_PBpay/static/js/main.642ebb46.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.05ee527d.css",
+    "static/js/main.642ebb46.js"
+  ]
+}

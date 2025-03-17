@@ -15,9 +15,9 @@ export default function AlertDialog({session_time}) {
    const currentUrl = window.location.href;
   const getDomain = () => {
   if (currentUrl.includes('paymentuiqa')) {
-    domain = 'https://paymentqa.policybazaar.com';
+    domain = 'https://paymentqa.pbpay.com';
   } else {
-    domain = 'https://payment.policybazaar.com';
+    domain = 'https://payment.pbpay.com';
   }
 }
 
@@ -34,7 +34,6 @@ export default function AlertDialog({session_time}) {
   return (
     <React.Fragment>
       <Button variant="outlined" onClick={handleClickOpen}>
-        
       </Button>
       <Dialog
         open={open}
@@ -45,8 +44,8 @@ export default function AlertDialog({session_time}) {
         
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Your current session is expired. If you want to extend the session ,
-		Please <a href="#" onClick={handleClose}  style={{ fontWeight: 'bold' }}> click here</a>.
+            Your current session has expired. If you want to extend the session ,
+		Please <a href="#" onClick={handleClose}  style={{ fontWeight: '700' }}> click here</a>.
           </DialogContentText>
         </DialogContent>
        

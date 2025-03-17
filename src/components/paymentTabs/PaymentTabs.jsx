@@ -51,11 +51,12 @@ export default function PaymentTabs({ apiData }) {
   const [tabAnimating, setTabAnimating] = useState([]);
 
   useEffect(() => {
-    if (apiData && apiData.length > 0) {
-      const dataBlock = apiData[0].data?.[0];
-      if (dataBlock && dataBlock.paymentModes) {
-        setPaymentModes(dataBlock.paymentModes);
-        setTabAnimating(Array(dataBlock.paymentModes.length).fill(false));
+    if (apiData && apiData.data) {
+      const dataBlock = apiData.data;
+      if (dataBlock.paymentModes) {
+        const modes = Object.values(dataBlock.paymentModes);
+        setPaymentModes(modes);
+        setTabAnimating(Array(modes.length).fill(false));
       }
       setIsLoading(false);
     }

@@ -1,7 +1,7 @@
 import { Grid, FormControl, InputLabel, MenuItem, Select, Button, Link } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
-function Netbanking({ apiData, nbDownBanks }) {
+function Netbanking({apiData, nbDownBanks }) {
   const [selectBankName, setBankName] = useState('');
   const [selectBankCode, setBankCode] = useState('');
   const [bankList, setBankList] = useState([]);
@@ -14,10 +14,9 @@ function Netbanking({ apiData, nbDownBanks }) {
 
   useEffect(() => {
     if (apiData?.data) {
-      const netBankingMethod = apiData.data.paymentModes?.netbanking;
-
+      const netBankingMethod = apiData.data.paymentModes?.find((mode) => mode.name === "netbanking");
       if (netBankingMethod) {
-        setPopularList(Object.values(netBankingMethod.popularInstruments || {}));
+        setPopularList(netBankingMethod.popularInstruments || []);
         setBankList(Object.values(netBankingMethod.instruments || {}));
         setNextUrl(netBankingMethod.nextURL || null);
       }

@@ -14,15 +14,20 @@ function Header({ apiData }) {
     const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
 
 
-    function calculateRemainingTime() {
-      // console.log('endtime:',endTime);
-      if (!endTime) return 0;
-      const currTime = new Date().getTime();
-      const expiryTime = new Date(parseInt(endTime)).getTime();
+    // function calculateRemainingTime() {
+    //   // console.log('endtime:',endTime);
+    //   if (!endTime) return 0;
+    //   const currTime = new Date().getTime();
+    //   const expiryTime = new Date(parseInt(endTime)).getTime();
 
-      const diff = expiryTime - currTime;
-      // console.log('difference:',diff);
-      return diff > 0 ? diff : 0;
+    //   const diff = expiryTime - currTime;
+    //   // console.log('difference:',diff);
+    //   return diff > 0 ? diff : 0;
+    // }
+    function calculateRemainingTime() {
+      const currentTime = new Date().getTime();
+      const difference = endTime - currentTime;
+      return difference > 0 ? difference : 0;
     }
 
 
@@ -34,7 +39,7 @@ function Header({ apiData }) {
         }, 1000);
       } else {
 
-        setShowSessionPopUp(false);
+        setShowSessionPopUp(true);
         if (!handleSubmitCalled.current) {
           setTimeout(() => {
             setShowSessionPopUp(false);
@@ -78,7 +83,7 @@ function Header({ apiData }) {
               <p className='text-right md:text-center '>
                 Session expires in
                 <span className="SessionTimer">
-                  {apiData && <SessionTimer endTime={apiData[0].data[0].sessionExpiryTime} />}
+                  {apiData && <SessionTimer endTime={apiData.data.sessionExpiryTime} />}
                 </span>
               </p>
             </div>
@@ -87,7 +92,7 @@ function Header({ apiData }) {
       </header>
       {apiData &&
         <Dialog open={showSessionPopUp}>
-          <AlertDialog sessionExpiryTime={apiData[0].data[0].sessionExpiryTime} />
+          <AlertDialog sessionExpiryTime={apiData.data.sessionExpiryTime} />
         </Dialog>}
     </>
   );

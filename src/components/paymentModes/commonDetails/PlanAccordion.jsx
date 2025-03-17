@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 
 
 
-export default function PlanAccordion({apiData}) {
+export default function PlanAccordion({ apiData }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const [expandedPanel, setExpandedPanel] = useState(null);
@@ -25,7 +25,7 @@ export default function PlanAccordion({apiData}) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const orders = apiData?.[0]?.data || [];
+  const order = apiData.data || {};
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpandedPanel(isExpanded ? panel : null);
@@ -40,46 +40,27 @@ export default function PlanAccordion({apiData}) {
               <p>Order Number</p>
             </div>
             <div>
-              <p>{orders[0]?.orderId || 'N/A'}</p>
+              <p>{order?.orderId || 'N/A'}</p>
             </div>
           </div>
 
           <div className="plan-detail-table">
             {!isMobileView && (
               <table className="w-full">
-                {orders.length > 0 ? (
-                  orders.map((merchant, index) => (
-                    <tr key={index}>
-                      <td colSpan="2">
-                        <img
-                          className="source-logo"
-                          src={
-                            /^https?:\/\//i.test(merchant.logo)
-                              ? merchant.logo
-                              : `./images/${merchant.logo}`
-                          }
-                          alt={merchant.merchantName}
-                          style={{ maxWidth: '100%', height: 'auto' }}
-                        />
-                      </td>
-                      <td colSpan="2">
-                        <div className="paying-card-head">
-                          <span>Amount</span>
-                          <strong className="block">
-                            <i className="text-xs">
-                              <FontAwesomeIcon icon={faInr} />
-                            </i>{' '}
-                            {(+merchant.amount).toFixed(2)}
-                          </strong>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4">No merchant data available</td>
-                  </tr>
-                )}
+                <tr>
+                  <td colSpan="2">
+                    <img className="source-logo" src={order.logo} />
+                  </td>
+                  <td colSpan="2">
+                    <div className="paying-card-head">
+                      <span>Amount</span>
+                      <strong className="block">
+                        {(+order.amount || 0).toFixed(2)}
+                      </strong>
+                    </div>
+                  </td>
+                </tr>
+
               </table>
             )}
           </div>
@@ -95,7 +76,8 @@ export default function PlanAccordion({apiData}) {
                     <i className="text-xs">
                       <FontAwesomeIcon icon={faInr} />
                     </i>{' '}
-                    {orders.length > 0 ? (+orders[0].amount).toFixed(2) : '0.00'}
+                    {(+order.amount || 0).toFixed(2)}
+
                   </strong>
                 </td>
               </tr>
@@ -111,7 +93,8 @@ export default function PlanAccordion({apiData}) {
                     <i className="text-xs" style={{ fontSize: '14px' }}>
                       <FontAwesomeIcon icon={faInr} />
                     </i>{' '}
-                    {orders.length > 0 ? (+orders[0].amount).toFixed(2) : '0.00'}
+                    {(+order.amount || 0).toFixed(2)}
+
                   </p>
                 </td>
               </tr>
@@ -142,74 +125,37 @@ export default function PlanAccordion({apiData}) {
           }
           aria-controls="order-details-content"
           id="order-details-header"
-         
+
         >
           <Typography variant="h7" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
-          <img
-            src="/images/order.png"
-            alt="Order Icon"
-            style={{ width: 24, height: 24, marginRight: 8 }}
-          />
+            <img
+              src="/images/order.png"
+              alt="Order Icon"
+              style={{ width: 24, height: 24, marginRight: 8 }}
+            />
             Order Details
           </Typography>
         </AccordionSummary>
-        <AccordionDetails 
-         sx={{
-          borderTop: '1px solid #e0e0e0',
-          borderBottom: '1px solid #e0e0e0'
-        }}
+        <AccordionDetails
+          sx={{
+            borderTop: '1px solid #e0e0e0',
+            borderBottom: '1px solid #e0e0e0'
+          }}
         >
           <div className="plan-details-view plan-details-box">
-            {orders.length > 0 ? (
-              orders.map((order, index) => (
-                <div key={index}>
-                  <table className="w-full">
-                    <tbody>
-                      <tr>
-                        <td colSpan="2">
-                          <p>Order Id:</p>
-                        </td>
-                        <td colSpan="2">
-                          <strong className="block">{order.orderId}</strong>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colSpan="2">
-                          <p>Merchant ID:</p>
-                        </td>
-                        <td colSpan="2">
-                          <strong className="block">{order.merchantId}</strong>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colSpan="2">
-                          <p>Merchant Name:</p>
-                        </td>
-                        <td colSpan="2">
-                          <strong className="block">{order.merchantName}</strong>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colSpan="2">
-                          <p>Amount:</p>
-                        </td>
-                        <td colSpan="2">
-                          <strong className="block">
-                            <i className="text-xs">
-                              <FontAwesomeIcon icon={faInr} />
-                            </i>{' '}
-                            {(+order.amount).toFixed(2)}
-                          </strong>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  {index < orders.length - 1 && <hr style={{ margin: '20px 0' }} />}
-                </div>
-              ))
+            {order?.orderId ? (
+              <table>
+                <tbody>
+                  <tr><td  style={{fontSize:'14px'}}>Order Id:</td><td style={{fontSize:'14px'}}>{order.orderId}</td></tr>
+                  <tr><td style={{fontSize:'14px'}}>Merchant ID:</td><td style={{fontSize:'14px'}}>{order.merchantId}</td></tr>
+                  <tr><td style={{fontSize:'14px'}}>Merchant Name:</td><td style={{fontSize:'14px'}}>{order.merchantName}</td></tr>
+                  <tr><td style={{fontSize:'14px'}}>Amount:</td><td style={{fontSize:'14px'}}>{(+order.amount || 0).toFixed(2)}</td></tr>
+                </tbody>
+              </table>
             ) : (
               <p>No order details available</p>
             )}
+
           </div>
         </AccordionDetails>
       </Accordion>

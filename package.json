@@ -1,7 +1,6 @@
 {
   "name": "pbpayui",
   "version": "0.1.0",
-  "homepage": "https://imarj72.github.io/PG_PBpay",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",

@@ -22,8 +22,8 @@ export default function PaymentAccordion({ apiData }) {
 
 
   useEffect(() => {
-    if (apiData && apiData.length > 0 && apiData[0].data && apiData[0].data.length > 0) {
-      const modes = apiData[0].data[0].paymentModes || [];
+    if (apiData && apiData.data) {
+      const modes = Object.values(apiData.data.paymentModes || {});
       setPaymentModes(modes);
       setIsLoading(false);
     }
@@ -62,8 +62,8 @@ export default function PaymentAccordion({ apiData }) {
                 <td colSpan="2">
                   <img
                     className="source-logo"
-                    src={apiData[0].data[0].logo}
-                    alt={apiData[0].data[0].merchantName}
+                    src={apiData.data.logo}
+                    alt={apiData.data.merchantName}
                     style={{ maxWidth: '100%', height: 'auto' }}
                   />
                 </td>
@@ -76,7 +76,7 @@ export default function PaymentAccordion({ apiData }) {
                           <i className="text-xs">
                             <FontAwesomeIcon icon={faInr} />
                           </i>{' '}
-                          {(+apiData[0].data[0].amount).toFixed(2)}
+                          {(+apiData.data.amount).toFixed(2)}
                         </div>
                       </p>
                     </div>
@@ -95,35 +95,6 @@ export default function PaymentAccordion({ apiData }) {
 
           {paymentModes.map((mode) => {
             switch (mode.id) {
-              case 'card02':
-                return (
-                  <Accordion
-                    key={mode.id}
-                    expanded={expanded === mode.id}
-                    onChange={handleChange(mode.id)}
-                    className="shadow-none"
-                  >
-                    <AccordionSummary
-                      expandIcon={
-                        <FontAwesomeIcon icon={expanded === mode.id ? faMinus : faPlus} />
-                      }
-                      aria-controls={`panel-${mode.id}-content`}
-                      id={`panel-${mode.id}-header`}
-                    >
-                      <Typography>
-                        <ImageComponent name="creditCard" />
-                        <span>Card</span>
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <CreditCard
-                        secret={apiData.secret}
-                        cardDownBanks={apiData.cardDownBanks}
-                      />
-                    </AccordionDetails>
-                  </Accordion>
-                );
-
               case 'NB01':
                 return (
                   <Accordion

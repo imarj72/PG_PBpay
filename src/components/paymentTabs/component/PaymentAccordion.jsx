@@ -76,7 +76,7 @@ export default function PaymentAccordion({ apiData }) {
                           <i className="text-xs">
                             <FontAwesomeIcon icon={faInr} />
                           </i>{' '}
-                          {(+apiData.data.amount).toFixed(2)}
+                          {((+apiData.data.amount)/100).toFixed(2)}
                         </div>
                       </p>
                     </div>

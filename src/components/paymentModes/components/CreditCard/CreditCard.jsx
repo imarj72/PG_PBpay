@@ -1,20 +1,10 @@
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  Link,
-  TextField,
-  InputAdornment,
-} from "@mui/material";
+import { Button, Grid, TextField, InputAdornment } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import MasterCardRupayForm from "../../MasterCardRupayForm";
 import CardValidator from "../../cardValidator";
 import VisaMasterInfo from "../../childComponent/VisaMasterInfo";
 import CustomizedDialogs from "../../../shared/CustomDialogs";
 
-function CreditCard({ apiData, secret, cardDownBanks }) {
+function CreditCard({ apiData, cardDownBanks }) {
   const [showVisaNetwork, setVisaNetwork] = useState(false);
   const [expiryMonthYear, setExpiryMonthYear] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -27,56 +17,42 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
   const [cardNameError, setCardNameError] = useState(
     "As mentioned on your Credit Card"
   );
-  const [txnurl, settxnurl] = useState("");
-  const [pgpayload, setpgpayload] = useState("");
-  const [showLoader, setshowLoader] = useState(false);
-  const [formHtml, setFormHtml] = useState("");
-  const [showForm, setShowForm] = useState(0);
-  const [rupayMap, setRupayMap] = useState("");
   const [cardType, setCardType] = useState("");
-  let form;
-  let data;
+  const [showLoader, setshowLoader] = useState(false);
+
+  const [htmlSnippet, setHtmlSnippet] = useState("");
 
   const queryParameters = new URLSearchParams(window.location.search);
-  const error = queryParameters.get("error");
-  if (error === "1") {
-    cardDownBanks = "HDFC Bank, ICICI Bank";
-  }
+
+  const rupayRanges = [
+    [508500, 508999],
+    [606985, 607984],
+    [608001, 608500],
+    [652150, 653149],
+  ];
 
   const getCardNetwork = (cardNumber) => {
     if (cardNumber.length >= 6) {
       const bin = cardNumber.substring(0, 6);
       const binNum = parseInt(bin, 10);
 
-      // Visa: Starts with 4
       if (/^4/.test(bin)) {
         setCardType("visa");
         return "visa";
-      }
-      // MasterCard: 51-55 or 2221-2720
-      else if (
+      } else if (
         (binNum >= 222100 && binNum <= 272099) ||
         (binNum >= 510000 && binNum <= 559999)
       ) {
         setCardType("mastercard");
         return "mastercard";
-      }
-      // Amex: Starts with 34 or 37
-      else if (/^3[47]/.test(bin)) {
+      } else if (/^3[47]/.test(bin)) {
         setCardType("amex");
         return "amex";
-      }
-      // Discover: Starts with 6011, 622126-622925, 644-649, 65
-      else if (/^(6011|622(1[2-9][0-9]|2[0-9]{2})|64[4-9]|65)/.test(bin)) {
+      } else if (/^(6011|622(1[2-9][0-9]|2[0-9]{2})|64[4-9]|65)/.test(bin)) {
         setCardType("discover");
         return "discover";
-      }
-      // RuPay: Specific BIN ranges
-      else if (
-        (binNum >= 508500 && binNum <= 508999) ||
-        (binNum >= 606985 && binNum <= 607984) ||
-        (binNum >= 608001 && binNum <= 608500) ||
-        (binNum >= 652150 && binNum <= 653149)
+      } else if (
+        rupayRanges.some(([min, max]) => binNum >= min && binNum <= max)
       ) {
         setCardType("rupay");
         return "rupay";
@@ -86,11 +62,30 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
     return "";
   };
 
-  const handleCvvChange = (event) => {
-    const inputValue = event.target.value;
-    if (!isNaN(inputValue) && inputValue.length <= 4) {
-      setCvv(inputValue);
+  const handleCardNumberChange = (event) => {
+    const value = event.target.value;
+    const sanitizedValue = value.replace(/\D/g, "").slice(0, 16);
+    const formattedValue = sanitizedValue.replace(/(.{4})/g, "$1 ").trim();
+    setCardNumber(formattedValue);
+    getCardNetwork(sanitizedValue);
+  };
+
+  const handleCardNumberClick = () => {
+    setCardNumberError("");
+    if (cardNumber === "XXXX-XXXX-XXXX-XXXX") {
+      setCardNumber("");
     }
+  };
+
+  const handleNameChange = (event) => {
+    let value = event.target.value;
+    value = value.replace(/[^A-Za-z\s]/g, "");
+    setName(value);
+  };
+
+  const handleNameClick = () => {
+    setCardNameError("As mentioned on your Credit Card");
+    setshowCardNameError(false);
   };
 
   const handleExpiryChange = (event) => {
@@ -109,23 +104,18 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
     setExpiryMonthYear(value);
   };
 
-  const handleNameClick = () => {
-    setCardNameError("As mentioned on your Credit Card");
-    setshowCardNameError(false);
-  };
-
   const handleExpiryClick = () => {
     setCardExpiryError("");
     if (expiryMonthYear === "MM-YY") {
       setExpiryMonthYear("");
     }
   };
-  const handleCardNumberChange = (event) => {
-    const value = event.target.value;
-    const sanitizedValue = value.replace(/\D/g, "").slice(0, 16);
-    const formattedValue = sanitizedValue.replace(/(.{4})/g, "$1 ").trim();
-    setCardNumber(formattedValue);
-    getCardNetwork(sanitizedValue);
+
+  const handleCvvChange = (event) => {
+    const inputValue = event.target.value;
+    if (!isNaN(inputValue) && inputValue.length <= 4) {
+      setCvv(inputValue);
+    }
   };
 
   const handleCvvClick = () => {
@@ -135,37 +125,23 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
     }
   };
 
-  const handleNameChange = (event) => {
-    let value = event.target.value;
-    value = value.replace(/[^A-Za-z\s]/g, "");
-    setName(value);
-  };
-
-  const handleCardNumberClick = () => {
-    setCardNumberError("");
-    if (cardNumber === "XXXX-XXXX-XXXX-XXXX") {
-      setCardNumber("");
-    }
-  };
   const handleKeyDown = (event) => {
     if (event.key === "Backspace") {
-      setExpiryMonthYear((prevValue) => prevValue(0, -1));
+      setExpiryMonthYear((prevValue) => prevValue.slice(0, -1));
     }
   };
 
-  
   const handlePayNow = async () => {
     const merchantId = apiData.data.merchantId;
     const transactionId = apiData.data.transactionId;
-    
     const paymentMode = "CC";
 
     let ccNo = cardNumber.replace(/\s+/g, "");
     let ccCardHolder = name;
     let ccCVV = cvv;
 
-
     let [month, year] = expiryMonthYear.split("-") || ["", ""];
+    if (!year) year = "";
 
     const validator = new CardValidator();
     let isValid = true;
@@ -193,33 +169,40 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
       isValid = false;
     }
 
-    if(!isValid)return;
+    if (!isValid) return;
 
     if (year.length === 2) {
       year = "20" + year;
     }
+
     const payload = {
-      merchantId: merchantId,
-      transactionId: transactionId,
-      paymentMode: paymentMode,
-      cardDetails: {
-        cardNo: ccNo,
-        cardHolderName: ccCardHolder,
-        cardCvv: ccCVV,
-        expiryMonth: parseInt(month),
-        expiryYear: parseInt(year),
+      data: {
+        merchantId: merchantId,
+        transactionId: transactionId,
+        paymentMode: paymentMode,
+        cardDetails: {
+          cardNo: ccNo,
+          cardHolderName: ccCardHolder,
+          cardCvv: ccCVV,
+          expiryMonth: parseInt(month),
+          expiryYear: parseInt(year),
+        },
       },
     };
 
-
     try {
-      const response = await fetch("https://qapayment.pbpay.com/pay/v1/makePayment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      setshowLoader(true);
+      const sessionId = queryParameters.get("sessionId");
+      const response = await fetch(
+        `http://localhost:8090/session/payment/pay/v1/makePayment?sessionId=${sessionId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
@@ -227,6 +210,10 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
 
       const data = await response.json();
       console.log("Payment Response:", data);
+
+      if (data?.data?.htmlData) {
+        setHtmlSnippet(data.data.htmlData);
+      }
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -234,21 +221,17 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
     }
   };
 
-  const delay = (millis) =>
-    new Promise((resolve, reject) => {
-      setTimeout((_) => resolve(), millis);
-    });
+  useEffect(() => {
+    if (htmlSnippet) {
+      const newWindow = window.open("", "_blank");
+      newWindow.document.write(htmlSnippet);
+      newWindow.document.close();
+    }
+  }, [htmlSnippet]);
 
   return (
     <>
-      {/* {showLoader && <Loader show={true}/>}
-    {pgpayload && (
-    <form method="post" action={txnurl} id="testForm">
-        {Object.keys(pgpayload).map((key, index) => (
-            <input key={index} type="hidden" id={key} name={key} value={pgpayload[key]} />
-        ))}
-    </form>
-)} */}
+      {showLoader && <div>Loading...</div>}
 
       {cardDownBanks &&
         cardDownBanks !== null &&
@@ -267,10 +250,12 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
             issues.
           </div>
         )}
+
       <div className="card-details">
-        <div class="hidden md:block">
-          <h5>Enter your Credit Card details</h5>{" "}
+        <div className="hidden md:block">
+          <h5>Enter your Credit Card details</h5>
         </div>
+
         <div className="card-detail-form">
           <Grid container spacing={3}>
             <Grid item md={12} xs={12} className={`debit-card ${cardType}`}>
@@ -282,7 +267,6 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
                 fullWidth
                 error={!!cardNumberError}
                 helperText={cardNumberError}
-                style={{ borderRadius: "8px" }}
                 onClick={handleCardNumberClick}
                 onChange={handleCardNumberChange}
                 InputProps={{
@@ -328,6 +312,7 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
                 }}
               />
             </Grid>
+
             <Grid item md={12} xs={12}>
               <TextField
                 id="name"
@@ -340,6 +325,7 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
                 value={name}
               />
             </Grid>
+
             <Grid item md={6} xs={12}>
               <TextField
                 id="expiry"
@@ -354,6 +340,7 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
                 fullWidth
               />
             </Grid>
+
             <Grid item md={6} xs={12} className="cvv-box">
               <TextField
                 id="cvv"
@@ -369,6 +356,7 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
               />
             </Grid>
           </Grid>
+
           <div className="autopay-check" style={{ marginTop: "30px" }}>
             <Button
               variant="outlined"
@@ -380,15 +368,6 @@ function CreditCard({ apiData, secret, cardDownBanks }) {
             </Button>
           </div>
         </div>
-        {showVisaNetwork ? (
-          <CustomizedDialogs
-            className="dialog-inner-box"
-            open={showVisaNetwork}
-            handleClose={() => setVisaNetwork(false)}
-          >
-            <VisaMasterInfo handleClose={() => setVisaNetwork(false)} />
-          </CustomizedDialogs>
-        ) : null}
       </div>
     </>
   );

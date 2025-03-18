@@ -29,7 +29,7 @@ function UpiDetails({ apiData }) {
   const [responseData, setResponseData] = useState('');
   const [validVPAerror, setValidVPAerror] = useState('');
   const [showUpiIntent, setShowUpiIntent] = useState(false);
-  const [showUpiQR, setShowUpiQR] = useState(true);
+  const [showUpiQR, setShowUpiQR] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [showRetry, setShowRetry] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
@@ -69,7 +69,7 @@ function UpiDetails({ apiData }) {
     var2 = queryParameters.get("var2");
     const mode = "UPI_INTENT";
     try {
-      const response = await fetch('/pay/securePayment/process/intermediate/paymentui', {
+      const response = await fetch('', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderNo: order, mode: mode })

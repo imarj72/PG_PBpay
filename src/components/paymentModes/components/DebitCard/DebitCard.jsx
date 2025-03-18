@@ -41,11 +41,15 @@ function DebitCard({ apiData, cardDownBanks }) {
   const [cardType, setCardType] = useState("");
   let form;
 
+  const [htmlSnippet, setHtmlSnippet] = useState("");
   const queryParameters = new URLSearchParams(window.location.search);
-  const error = queryParameters.get("error");
-  if (error === "1") {
-    cardDownBanks = "HDFC Bank, ICICI Bank";
-  }
+
+  const rupayRanges = [
+    [508500, 508999],
+    [606985, 607984],
+    [608001, 608500],
+    [652150, 653149],
+  ];
 
   const getCardNetwork = (cardNumber) => {
     if (cardNumber.length >= 6) {
@@ -74,13 +78,8 @@ function DebitCard({ apiData, cardDownBanks }) {
       else if (/^(6011|622(1[2-9][0-9]|2[0-9]{2})|64[4-9]|65)/.test(bin)) {
         setCardType("discover");
         return "discover";
-      }
-      // RuPay: Specific BIN ranges
-      else if (
-        (binNum >= 508500 && binNum <= 508999) ||
-        (binNum >= 606985 && binNum <= 607984) ||
-        (binNum >= 608001 && binNum <= 608500) ||
-        (binNum >= 652150 && binNum <= 653149)
+      } else if (
+        rupayRanges.some(([min, max]) => binNum >= min && binNum <= max)
       ) {
         setCardType("rupay");
         return "rupay";
@@ -89,7 +88,6 @@ function DebitCard({ apiData, cardDownBanks }) {
     setCardType("");
     return "";
   };
-
   const handleCvvChange = (event) => {
     const inputValue = event.target.value;
 
@@ -133,7 +131,6 @@ function DebitCard({ apiData, cardDownBanks }) {
     }
   };
 
-
   const handleCardNumberChange = (event) => {
     const value = event.target.value;
     const sanitizedValue = value.replace(/\D/g, "").slice(0, 16);
@@ -163,7 +160,6 @@ function DebitCard({ apiData, cardDownBanks }) {
   const handlePayNow = async () => {
     const merchantId = apiData.data.merchantId;
     const transactionId = apiData.data.transactionId;
-
     const paymentMode = "DC";
 
     let ccNo = cardNumber.replace(/\s+/g, "");
@@ -171,6 +167,7 @@ function DebitCard({ apiData, cardDownBanks }) {
     let ccCVV = cvv;
 
     let [month, year] = expiryMonthYear.split("-") || ["", ""];
+    if (!year) year = "";
 
     const validator = new CardValidator();
     let isValid = true;
@@ -198,27 +195,32 @@ function DebitCard({ apiData, cardDownBanks }) {
       isValid = false;
     }
 
-    if (!isValid)return;
+    if (!isValid) return;
 
     if (year.length === 2) {
       year = "20" + year;
     }
+
     const payload = {
-      merchantId: merchantId,
-      transactionId: transactionId,
-      paymentMode: paymentMode,
-      cardDetails: {
-        cardNo: ccNo,
-        cardHolderName: ccCardHolder,
-        cardCvv: ccCVV,
-        expiryMonth: parseInt(month),
-        expiryYear: parseInt(year),
+      data: {
+        merchantId: merchantId,
+        transactionId: transactionId,
+        paymentMode: paymentMode,
+        cardDetails: {
+          cardNo: ccNo,
+          cardHolderName: ccCardHolder,
+          cardCvv: ccCVV,
+          expiryMonth: parseInt(month),
+          expiryYear: parseInt(year),
+        },
       },
     };
 
     try {
+      setshowLoader(true);
+      const sessionId = queryParameters.get("sessionId");
       const response = await fetch(
-        "https://qapayment.pbpay.com/pay/v1/makePayment",
+        `http://localhost:8090/session/payment/pay/v1/makePayment?sessionId=${sessionId}`,
         {
           method: "POST",
           headers: {
@@ -234,6 +236,10 @@ function DebitCard({ apiData, cardDownBanks }) {
 
       const data = await response.json();
       console.log("Payment Response:", data);
+
+      if (data?.data?.htmlData) {
+        setHtmlSnippet(data.data.htmlData);
+      }
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -241,11 +247,13 @@ function DebitCard({ apiData, cardDownBanks }) {
     }
   };
 
-  const delay = (millis) =>
-    new Promise((resolve, reject) => {
-      setTimeout((_) => resolve(), millis);
-    });
-
+  useEffect(() => {
+    if (htmlSnippet) {
+      const newWindow = window.open("", "_blank");
+      newWindow.document.write(htmlSnippet);
+      newWindow.document.close();
+    }
+  }, [htmlSnippet]);
   return (
     <>
       {/* {showLoader && <Loader show={true}/>}
@@ -256,46 +264,6 @@ function DebitCard({ apiData, cardDownBanks }) {
         ))}
     </form>
 )} */}
-
-      {showForm === 1 && (
-        <div
-          style={{
-            position: "fixed", // Ensure this div covers the whole viewport
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "white", // Blank background color
-            display: "flex",
-            justifyContent: "center", // Center horizontally
-            alignItems: "center", // Center vertically
-            zIndex: 9999, // Ensure it's on top of other content
-          }}
-        >
-          <div dangerouslySetInnerHTML={{ __html: formHtml }} />
-        </div>
-      )}
-
-      {showForm === 2 && (
-        <div
-          style={{
-            position: "fixed", // Ensure this div covers the whole viewport
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "white", // Blank background color
-            //display: 'flex',
-            width: "100%",
-            height: "100%",
-            justifyContent: "center", // Center horizontally
-            alignItems: "center", // Center vertically
-            zIndex: 9999, // Ensure it's on top of other content
-          }}
-        >
-          <MasterCardRupayForm mastRupay={rupayMap} />
-        </div>
-      )}
 
       {cardDownBanks &&
         cardDownBanks !== null &&

@@ -223,7 +223,7 @@ function CreditCard({ apiData, cardDownBanks }) {
 
   useEffect(() => {
     if (htmlSnippet) {
-      const newWindow = window.open("", "_blank");
+      const newWindow = window.open("", "_self");
       newWindow.document.write(htmlSnippet);
       newWindow.document.close();
     }
@@ -231,8 +231,6 @@ function CreditCard({ apiData, cardDownBanks }) {
 
   return (
     <>
-      {showLoader && <div>Loading...</div>}
-
       {cardDownBanks &&
         cardDownBanks !== null &&
         cardDownBanks.includes(",") && (

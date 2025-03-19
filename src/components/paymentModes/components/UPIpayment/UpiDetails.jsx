@@ -17,8 +17,6 @@ import PaymentFailedPopup from './PaymentFailedPopup';
 import UpiPaymentProcess from './UpiPaymentProcess';
 import fetchTxnStatus from '../../fetchTxnStatus';
 import UpiQR from './UpiQR';
-// import Loader from '../../Components/loader';
-// import getDomain from '../../Components/getDomain';
 
 function UpiDetails({ apiData }) {
   const [selectOtherApps, setSelectOtherApps] = useState('');
@@ -28,7 +26,8 @@ function UpiDetails({ apiData }) {
   const [QrCodeData, setQrCodeData] = useState('');
   const [responseData, setResponseData] = useState('');
   const [validVPAerror, setValidVPAerror] = useState('');
-  const [showUpiIntent, setShowUpiIntent] = useState(false);
+  const [showUpiIntent, setShowUpiIntent] = useState(false); //->used for choosing apps
+  const [showUpiCollect, setShowUpiCollect] = useState(false);
   const [showUpiQR, setShowUpiQR] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [showRetry, setShowRetry] = useState(false);
@@ -40,17 +39,28 @@ function UpiDetails({ apiData }) {
   const isCheckingStatusRef = useRef(false);
   const [activeStep, setActiveStep] = useState(0);
 
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
 
   let var1, var2;
 
 
-  const handleChange = (event) => {
-    setSelectOtherApps(event.target.value);
-  };
+  useEffect(() => {
+    if (apiData && apiData.data.paymentModes) {
+      apiData.data.paymentModes.forEach(mode => {
+        if (mode?.name === 'UPI_COLLECT' || mode?.name === 'upi_collect') {
+          setShowUpiCollect(true);
+        } else if (mode?.name === 'UPI_QR' || mode?.name === 'upi_qr') {
+          setShowUpiQR(true);
+        }
+        else if ((mode?.name === 'UPI_COLLECT' || mode?.name === 'upi_collect') && (mode?.name === 'UPI_QR' || mode?.name === 'upi_qr')) {
+          setShowUpiCollect(true);
+          setShowUpiQR(true);
+        }
+      });
+    }
+  }, [apiData]);
+
 
   const handleVpaChange = (event) => {
     setVpa(event.target.value);
@@ -60,131 +70,71 @@ function UpiDetails({ apiData }) {
     setValidVPAerror('');
   };
 
-
-  const handleIntentPayNow = async () => {
-    setShowLoader(true);
-    const queryParameters = new URLSearchParams(window.location.search);
-    const order = queryParameters.get("orderNo");
-    var1 = queryParameters.get("var1");
-    var2 = queryParameters.get("var2");
-    const mode = "UPI_INTENT";
-    try {
-      const response = await fetch('', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderNo: order, mode: mode })
-      });
-      const data1 = await response.json();
-      if (data1 && data1.data.decPayId) {
-        setShowLoader(false);
-        const decPayId = data1.data.decPayId;
-        var1 = data1.data.interStatusVar1;
-        var2 = data1.data.interStatusVar2;
-        setPayId(decPayId);
-        isCheckingStatusRef.current = true;
-        window.location.href = data1.data.intentLink;
-        setTimeout(() => checkTransactionStatus(decPayId, var1, var2), data1.data.upiWaitStatusTime * 1000);
-      } else {
-        setShowLoader(false);
-      }
-    } catch (error) {
-      console.error('Error:', error);
+  const handlePayNow=async()=>{
+    if(vpa!=='')
+    {
+      setMode('UPI_COLLECT');
+      //assuming valid ->tobeUpdated @aniket
+      setShowUpiPopUp(true);
+      // setValidVPAerror('Enter Valid VPA');
     }
-  };
+  }
 
-  const handleQRPayNow = async () => {
-    setShowLoader(true);
-    const queryParameters = new URLSearchParams(window.location.search);
-    const order = queryParameters.get("orderNo");
-    var1 = queryParameters.get("var1");
-    var2 = queryParameters.get("var2");
-    const mode = "UPI-QR";
-    setMode('UPI-QR');
-    try {
-      const response = await fetch('/pay/securePayment/process/intermediate/paymentui', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderNo: order, mode: mode })
-      });
-      const data = await response.json();
-      if (data && data.decQrPayId) {
-        setQrCodeData(data);
-        setShowLoader(false);
-        setShowUpiBarCode(true);
-        setWaitStatusTime(data.qrCodeWaitStatusTime);
-        const decPayId = data.decQrPayId;
-        var1 = data.interStatusVar1;
-        var2 = data.interStatusVar2;
-        setPayId(decPayId);
-        isCheckingStatusRef.current = true;
-        setTimeout(() => checkTransactionStatus(decPayId, var1, var2), data.qrCodeWaitStatusTime * 1000);
-      } else {
-        setShowLoader(false);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const handlePayNow = async () => {
-    if (vpa !== '') {
-      setShowLoader(true);
-      const queryParameters = new URLSearchParams(window.location.search);
-      const order = queryParameters.get("orderNo");
-      var1 = queryParameters.get("var1");
-      var2 = queryParameters.get("var2");
-      const decodedVpa = decodeURIComponent(vpa);
-      const mode = "UPI";
-      setMode('UPI');
-      try {
-        const response = await fetch('/pay/validate/vpa', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderNo: order, mode: mode, json: decodedVpa, var1, var2 })
-        });
-        const data = await response.json();
-        if (data.data.isVPAValid === 1) {
-          const response1 = await fetch('/pay/securePayment/process/intermediate/paymentui', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderNo: order, mode: mode, vpa: decodedVpa })
-          });
-          const data1 = await response1.json();
-          setQrCodeData(data1.data);
-          const decPayId = data1.data.decPayId;
-          var1 = data1.data.interStatusVar1;
-          var2 = data1.data.interStatusVar2;
-          setPayId(decPayId);
-          setShowLoader(false);
-          if (data1.data.decPayId) {
-            setWaitStatusTime(data1.data.upiWaitStatusTime);
-            setShowUpiPopUp(true);
-            isCheckingStatusRef.current = true;
-            setTimeout(() => checkTransactionStatus(decPayId, var1, var2), data1.data.upiWaitStatusTime * 1000);
-          } else {
-            setShowLoader(false);
-            setValidVPAerror('Some error occured, Please try again!');
-          }
-        } else {
-          setShowLoader(false);
-          setValidVPAerror('Please enter a valid VPA');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    } else {
-      setValidVPAerror('Please enter a valid VPA');
-    }
-  };
+  // const handlePayNow = async () => {
+  //   if (vpa !== '') {
+  //     setShowLoader(true);
+  //     const decodedVpa = decodeURIComponent(vpa);
+  //     const mode = "UPI_COLLECT";
+  //     setMode('UPI_COLLECT');
+  //     try {
+  //       const response = await fetch('', {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({ orderNo: order, mode: mode, json: decodedVpa, var1, var2 })
+  //       });
+  //       const data = await response.json();
+  //       if (data.data.isVPAValid === 1) {
+  //         const response1 = await fetch('/pay/securePayment/process/intermediate/paymentui', {
+  //           method: 'POST',
+  //           headers: { 'Content-Type': 'application/json' },
+  //           body: JSON.stringify({ orderNo: order, mode: mode, vpa: decodedVpa })
+  //         });
+  //         const data1 = await response1.json();
+  //         setQrCodeData(data1.data);
+  //         const decPayId = data1.data.decPayId;
+  //         var1 = data1.data.interStatusVar1;
+  //         var2 = data1.data.interStatusVar2;
+  //         setPayId(decPayId);
+  //         setShowLoader(false);
+  //         if (data1.data.decPayId) {
+  //           setWaitStatusTime(data1.data.upiWaitStatusTime);
+  //           setShowUpiPopUp(true);
+  //           isCheckingStatusRef.current = true;
+  //           setTimeout(() => checkTransactionStatus(decPayId, var1, var2), data1.data.upiWaitStatusTime * 1000);
+  //         } else {
+  //           setShowLoader(false);
+  //           setValidVPAerror('Some error occured, Please try again!');
+  //         }
+  //       } else {
+  //         setShowLoader(false);
+  //         setValidVPAerror('Please enter a valid VPA');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error:', error);
+  //     }
+  //   } else {
+  //     setValidVPAerror('Please enter a valid VPA');
+  //   }
+  // };
 
   const retryPayment = async () => {
     setShowRetry(false);
-    if (mode === 'UPI') {
+    if (mode === 'UPI_COLLECT') { 
       handlePayNow();
-    } else if (mode === 'UPI-QR') {
-      handleQRPayNow();
+    } else if (mode === 'UPI_QR') {
+      // handleQRPayNow();
     } else if (mode === 'UPI_INTENT') {
-      handleIntentPayNow();
+      // handleIntentPayNow();
     }
   };
 
@@ -230,11 +180,10 @@ function UpiDetails({ apiData }) {
     form.submit();
   };
 
-
   return (
     <>
       {/* Hidden form for submitting UPI details, if needed */}
-      {/* 
+      {/*
       <form
         className="form-field"
         action={actionUrl}
@@ -256,7 +205,7 @@ function UpiDetails({ apiData }) {
                 <span className='absolute right-5'></span>
               </h3>
               <div className='sm:py-1 pe-3 ps-0 sm:mt-3'>
-                <Button className='pay-now-btn' onClick={handleIntentPayNow}>
+                <Button className='pay-now-btn'>
                   CHOOSE AN APP
                 </Button>
               </div>
@@ -268,6 +217,7 @@ function UpiDetails({ apiData }) {
               <ul>
                 {isMobile ? (
                   <>
+                  {showUpiCollect &&(
                     <li>
                       <h3>Enter UPI ID</h3>
                       <form className='mt-3'>
@@ -297,15 +247,15 @@ function UpiDetails({ apiData }) {
                             <span>Authorize payment request</span>
                           </li>
                         </ul>
-
                       </div>
                     </li>
+                  )}
                     {showUpiQR && (
                       <li>
                         <h3>Scan and Pay</h3>
                         <div className='barcode-icon'>
                           <ImageComponent name="barcode" />
-                          <Button className='genrate-qrcode' onClick={handleQRPayNow}>
+                          <Button className='genrate-qrcode'>
                             View
                           </Button>
                         </div>
@@ -313,50 +263,50 @@ function UpiDetails({ apiData }) {
                     )}
                   </>
                 ) : (
-
                   <>
                     {showUpiQR && (
                       <li>
                         <h3>Scan and Pay</h3>
                         <div className='barcode-icon'>
                           <ImageComponent name="barcode" />
-                          <Button className='genrate-qrcode' onClick={handleQRPayNow}>
+                          <Button className='genrate-qrcode'>
                             View
                           </Button>
                         </div>
                       </li>
                     )}
-                    <li>
-                      <h3>Enter UPI ID</h3>
-                      <form className='mt-3'>
-                        <TextField
-                          id="vpa-input"
-                          label="mobilenumber@upi"
-                          fullWidth
-                          value={vpa}
-                          error={!!validVPAerror}
-                          helperText={validVPAerror}
-                          onChange={handleVpaChange}
-                          onClick={handleVpaClick}
-                        />
-                        <Button className="verify-pay-btn" onClick={handlePayNow}>
-                          Verify &amp; Pay
-                        </Button>
-                      </form>
-                      <div id="stepper">
-                        <ul className="steps">
-                          <li>
-                            <span>Enter your registered VPA</span>
-                          </li>
-                          <li className="steps">
-                            <span>Receive payment request on payment app</span>
-                          </li>
-                          <li className="non-active">
-                            <span>Authorize payment request</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
+                    {showUpiCollect && (
+                      <li>
+                        <h3>Enter UPI ID</h3>
+                        <form className='mt-3'>
+                          <TextField
+                            id="vpa-input"
+                            label="mobilenumber@upi"
+                            fullWidth
+                            value={vpa}
+                            error={!!validVPAerror}
+                            helperText={validVPAerror}
+                            onChange={handleVpaChange}
+                            onClick={handleVpaClick}
+                          />
+                          <Button className="verify-pay-btn" onClick={handlePayNow}>
+                            Verify &amp; Pay
+                          </Button>
+                        </form>
+                        <div id="stepper">
+                          <ul className="steps">
+                            <li>
+                              <span>Enter your registered VPA</span>
+                            </li>
+                            <li className="steps">
+                              <span>Receive payment request on payment app</span>
+                            </li>
+                            <li className="non-active">
+                              <span>Authorize payment request</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </li>)}
                   </>
                 )}
               </ul>

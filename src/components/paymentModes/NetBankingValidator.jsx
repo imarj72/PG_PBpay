@@ -21,7 +21,6 @@ class NetBankingValidator extends React.Component {
   }
 
   isSelectedBankValid(value){
-    // console.log(value.length);
    var isValid = false;
    if(value>0){
     isValid=true;

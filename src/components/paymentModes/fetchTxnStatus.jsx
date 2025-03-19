@@ -6,7 +6,11 @@ async function fetchTxnStatus(payId , var1 , var2) {
         'Content-Type': 'application/json'
       },
     });
-
+    if(!response.ok)
+    {
+      console.log('Error fetching txn status:',response.statusText);
+      return null;
+    }
     const data = await response.json();
     return data;
   } catch (error) {

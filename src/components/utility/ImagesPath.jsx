@@ -57,4 +57,5 @@ export const ImagePath= {
     'Emandate Banner' : 'images/emandate-banner.svg',
     'successIcon':'images/success_icon.svg',
     'loaderGif':'images/loader.gif',
+    'upigif':'images/upi.gif',
 }

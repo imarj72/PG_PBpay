@@ -65,7 +65,7 @@ function UpiQR({ QrCodeData, handleCloseDialog , txAmount, mode }) {
           <ul>
             <li>
               <span>Merchant Name</span>
-              <strong>PolicyBazaar</strong>
+              <strong>PBPay</strong>
             </li>
             <li>
               <span>Payment Amount</span>

@@ -220,6 +220,7 @@ function DebitCard({ apiData, cardDownBanks }) {
       setshowLoader(true);
       const sessionId = queryParameters.get("sessionId");
       const response = await fetch(
+      //  `https://qapaymentapi.pbpay.com/session/payment/pay/v1/makePayment?sessionId=${sessionId}`,
         `http://localhost:8090/session/payment/pay/v1/makePayment?sessionId=${sessionId}`,
         {
           method: "POST",
@@ -249,22 +250,13 @@ function DebitCard({ apiData, cardDownBanks }) {
 
   useEffect(() => {
     if (htmlSnippet) {
-      const newWindow = window.open("", "_blank");
+      const newWindow = window.open("", "_self");
       newWindow.document.write(htmlSnippet);
       newWindow.document.close();
     }
   }, [htmlSnippet]);
   return (
     <>
-      {/* {showLoader && <Loader show={true}/>}
-    {pgpayload && (
-    <form method="post" action={txnurl} id="testForm">
-        {Object.keys(pgpayload).map((key, index) => (
-            <input key={index} type="hidden" id={key} name={key} value={pgpayload[key]} />
-        ))}
-    </form>
-)} */}
-
       {cardDownBanks &&
         cardDownBanks !== null &&
         cardDownBanks.includes(",") && (

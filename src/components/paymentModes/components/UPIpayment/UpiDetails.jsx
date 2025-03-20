@@ -26,7 +26,7 @@ function UpiDetails({ apiData }) {
   const [QrCodeData, setQrCodeData] = useState('');
   const [responseData, setResponseData] = useState('');
   const [validVPAerror, setValidVPAerror] = useState('');
-  const [showUpiIntent, setShowUpiIntent] = useState(false); //->used for choosing apps
+  const [showUpiIntent, setShowUpiIntent] = useState(false);
   const [showUpiCollect, setShowUpiCollect] = useState(false);
   const [showUpiQR, setShowUpiQR] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -69,6 +69,45 @@ function UpiDetails({ apiData }) {
   const handleVpaClick = () => {
     setValidVPAerror('');
   };
+
+  // const vpaValidationApiUrl = '/api/validateVPA'; 
+
+  // const validateVPA = async (vpa) => {
+  //   try {
+  //     const response = await fetch(`${vpaValidationApiUrl}?vpa=${vpa}`, { 
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`VPA validation failed with status ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+  //     return data.isValid; 
+  //   } catch (error) {
+  //     console.error('VPA validation error:', error);
+  //     setValidVPAerror('Error validating VPA. Please try again.');
+  //     return false;
+  //   }
+  // };
+
+  // const handlePayNow = async () => {
+  //   if (vpa !== '') {
+  //     const isValidVPA = await validateVPA(vpa);
+  //     if (isValidVPA) {
+  //       setMode('UPI_COLLECT');
+  //       setShowUpiPopUp(true);
+  //       setValidVPAerror(''); 
+
+  //     } else {
+  //       setShowUpiPopUp(false);
+  //       setValidVPAerror('Invalid VPA. Please check and try again.');
+  //     }
+  //   }
+  // };
 
   const handlePayNow=async()=>{
     if(vpa!=='')
@@ -316,7 +355,7 @@ function UpiDetails({ apiData }) {
       </div>
 
       <Dialog open={showUpiPopUp} onClose={() => setShowUpiPopUp(false)}>
-        <UpiPaymentProcess QrCodeData={QrCodeData} handleCloseDialog={handleCloseDialog} vpa={vpa} />
+        <UpiPaymentProcess QrCodeData={QrCodeData} handleCloseDialog={handleCloseDialog} vpa={vpa}  apiData={apiData}/>
       </Dialog>
 
       <Dialog open={showUpiBarCode} onClose={() => setShowUpiBarCode(false)} className='upi-dialog'>
